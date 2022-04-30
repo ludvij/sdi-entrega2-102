@@ -1,10 +1,36 @@
-module.exports = function (app, usersRepository) {
-    app.get('/users', function (req, res) {
-        res.send('lista de usuarios');
-    })
+module.exports = function (app, userModel) {
     app.get('/users/signup', function (req, res) {
         res.render("signup.twig");
-    })
+    });
+    app.post('/users/signup', function (req, res) {
+        let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
+            .update(req.body.password).digest('hex');
+        let repeatSecurePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
+            .update(req.body.passwordCheck).digest('hex');
+
+        if (securePassword === repeatSecurePassword) {
+            let user = new userModel({
+                email: req.body.email,
+                name: req.body.name,
+                surname: req.body.surname,
+                password: securePassword,
+                role: "ROLE_USER"
+            });
+            user.save(function(err) {
+                if (err) {
+                    res.redirect("/users/signup" + '?message=Se ha producido un error al registrar el usuario: ' + err +
+                        "&messageType=alert-danger");
+                } else {
+                    res.redirect("/users/login" + '?message=Nuevo usuario registrado. Inicie la sesión.' +
+                        "&messageType=alert-info");
+                }
+            });
+
+        } else {
+            res.redirect("/users/signup" + '?message=Ambas contraseñas deben de ser iguales.' +
+                "&messageType=alert-danger");
+        }
+    });
     app.get('/users/login', function (req, res) {
         res.render("login.twig");
     })
@@ -36,30 +62,4 @@ module.exports = function (app, usersRepository) {
         req.session.user = null;
         res.send("El usuario se ha desconectado correctamente");
     })
-    app.post('/users/signup', function (req, res) {
-        let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-            .update(req.body.password).digest('hex');
-        let repeatSecurePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-            .update(req.body.passwordCheck).digest('hex');
-
-        if (securePassword === repeatSecurePassword) {
-            let user = {
-                email: req.body.email,
-                name: req.body.name,
-                surname: req.body.surname,
-                password: securePassword
-            }
-            usersRepository.insertUser(user).then(userId => {
-                res.redirect("/users/login" + '?message=Nuevo usuario registrado.' +
-                    "&messageType=alert-info");
-            }).catch(error => {
-                res.redirect("/users/signup" + '?message=Se ha producido un error al registrar el usuario.' +
-                    "&messageType=alert-danger");
-            });
-        } else {
-            //Igual esto se podía modificar para q no se pierda todo lo demás q puso en el registro
-            res.redirect("/users/signup" + '?message=Ambas contraseñas deben de ser iguales.' +
-                "&messageType=alert-danger");
-        }
-    });
 }
