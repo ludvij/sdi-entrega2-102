@@ -13,6 +13,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 require("./database").connect()
 
+
+let expressSession = require("express-session");
+app.use(expressSession({
+    secret: "abcdefg",
+    resave: true,
+    saveUninitialized: true
+}));
 app.set("crypto", crypto);
 app.set("clave", "abcdefg");
 

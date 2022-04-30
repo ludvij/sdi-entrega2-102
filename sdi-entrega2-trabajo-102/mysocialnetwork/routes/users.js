@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 module.exports = function (app, userModel) {
     app.get('/users/signup', function (req, res) {
         res.render("signup.twig");
@@ -34,28 +35,27 @@ module.exports = function (app, userModel) {
     app.get('/users/login', function (req, res) {
         res.render("login.twig");
     })
-    app.post('/users/login', function (req, res) {
+    app.post('/users/login', async function (req, res) {
             let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
                 .update(req.body.password).digest('hex');
             let filter = {
                 email: req.body.email,
                 password: securePassword
             }
-            let options = {};
-            usersRepository.findUser(filter, options).then(user => {
+
+            await userModel.findOne(filter).exec(function (err, user) {
+                if (err) {
+                    console.log(err)
+                }
                 if (user == null) {
                     req.session.user = null;
-                    //res.send("Usuario no identificado");
-                    res.redirect("/users/login" + "?message=Email o password incorrecto" + "&messageType=alert-danger ");
+                    res.redirect("/users/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
                 } else {
                     req.session.user = user.email;
-                    res.redirect("/publications");
+                    console.log("logged in as " + user.name + "(" + req.session.user + ")");
+                    res.redirect("/");
                 }
-            }).catch(error => {
-                req.session.user = null;
-                //res.send("Se ha producido un error al buscar el usuario: " + error)
-                res.redirect("/users/login" + "?message=Se ha producido un error al buscar el usuario" + "&messageType=alert-danger ");
-            })
+            });
         }
     )
     app.get('/users/logout', function (req, res) {
