@@ -4,6 +4,15 @@ module.exports = {
     init: function (app, userModel) {
         this.userModel = userModel;
         this.app = app;
+    }, createUser: function (body, securePassword, callback){
+        let user = new this.userModel({
+            email: body.email,
+            name: body.name,
+            surname: body.surname,
+            password: securePassword,
+            role: "ROLE_USER"
+        });
+        user.save(callback);
     },getUsersPg: async function (filter, options, page) {
         try {
             const limit = 5;
@@ -16,5 +25,7 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },findUser: async function (filter, callback){
+        await this.userModel.findOne(filter).exec(callback);
     }
 };

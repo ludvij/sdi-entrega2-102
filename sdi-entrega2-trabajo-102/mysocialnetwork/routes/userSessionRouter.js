@@ -7,7 +7,7 @@ userSessionRouter.use(function (req, res, next) {
             if (err)
                 console.log(err);
             else {
-                if (user.role == "ROLE_USER" || user.role == "ROLE_ADMIN")
+                if (user.role == "ROLE_USER")
                     next();
                 else
                     res.redirect("/");
