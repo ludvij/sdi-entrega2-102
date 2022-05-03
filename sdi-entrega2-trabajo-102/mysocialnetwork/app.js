@@ -7,6 +7,8 @@ let crypto = require("crypto");
 
 let app = express();
 
+let indexRouter = require('./routes/index');
+
 let bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -25,18 +27,22 @@ app.set("clave", "abcdefg");
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
 app.use("/admin", adminSessionRouter);
+const userSessionRouter = require("./routes/userSessionRouter");
+app.use("/users", userSessionRouter);
+app.use("/friends", userSessionRouter);
+app.use("/publications", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
-require("./routes/users.js")(app, userModel);
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, userModel);
+require("./routes/users.js")(app, userModel, usersRepository);
 require("./routes/admin.js")(app, userModel);
-
-
-var indexRouter = require('./routes/index');
-app.use('/', indexRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
+
+app.use('/', indexRouter);
 
 app.use(logger('dev'));
 app.use(express.json());
