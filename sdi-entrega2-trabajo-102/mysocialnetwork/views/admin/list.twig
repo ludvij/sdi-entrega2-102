@@ -7,6 +7,8 @@
         <h2>Usuarios</h2>
         <p>Los usuarios que actualmente figuran en el sistema son los siguientes:</p>
         <div class="table-responsive">
+            <form action="/admin/delete" method="post">
+                <input type="submit" id="deleteButton" class="btn btn-danger" value="Eliminar"/>
             <table class="table table-hover" id="tableUsers">
                 <thead>
                 <tr>
@@ -21,10 +23,12 @@
                         <td scope="row">{{ user.email }}</td>
                         <td scope="row">{{ user.name }}</td>
                         <td scope="row">{{ user.surname }}</td>
+                        <td scope="row" ><input type="checkbox" name="users" value={{ user.email }} /> </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            </form>
         </div>
     </div>
 {% endblock %}

@@ -24,11 +24,12 @@ app.set("crypto", crypto);
 app.set("clave", "abcdefg");
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
+const usersRepository = require("./repositories/usersRepository.js");
 app.use("/admin", adminSessionRouter);
 
 let userModel = require("./schemas/schema").User
 require("./routes/users.js")(app, userModel);
-require("./routes/admin.js")(app, userModel);
+require("./routes/admin.js")(app, userModel, usersRepository);
 
 
 var indexRouter = require('./routes/index');
