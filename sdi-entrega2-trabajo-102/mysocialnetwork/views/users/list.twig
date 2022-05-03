@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %} Listado de usuarios {% endblock %}
+
+{% block main_container %}
+    <div class="container">
+        <h2>Usuarios</h2>
+        <p>Lista de usuarios:</p>
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableUsers">
+                <thead>
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                </tr>
+                </thead>
+                <tbody id="cuerpo">
+                {% for user in users %}
+                    <tr>
+                        <td scope="row">{{ user.email }}</td>
+                        <td scope="row">{{ user.name }}</td>
+                        <td scope="row">{{ user.surname }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                <li class="page-item" id="pi-{{ page }}">
+                    <a class="page-link" href="/users/list/?page={{ page }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}

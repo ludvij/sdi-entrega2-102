@@ -25,9 +25,15 @@ app.set("clave", "abcdefg");
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
 app.use("/admin", adminSessionRouter);
+const userSessionRouter = require("./routes/userSessionRouter");
+app.use("/users", userSessionRouter);
+app.use("/friends", userSessionRouter);
+app.use("/publications", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
-require("./routes/users.js")(app, userModel);
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, userModel);
+require("./routes/users.js")(app, userModel, usersRepository);
 require("./routes/admin.js")(app, userModel);
 
 

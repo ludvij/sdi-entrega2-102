@@ -1,28 +1,18 @@
 module.exports = {
-    mongoClient: null,
+    userModel: null,
     app: null,
-    init: function (app, mongoClient) {
-        this.mongoClient = mongoClient;
+    init: function (app, userModel) {
+        this.userModel = userModel;
         this.app = app;
-    }, findUser: async function (filter, options) {
+    },getUsersPg: async function (filter, options, page) {
         try {
-            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("sdibook");
-            const collectionName = 'users';
-            const usersCollection = database.collection(collectionName);
-            const user = await usersCollection.findOne(filter, options);
-            return user;
-        } catch (error) {
-            throw (error);
-        }
-    }, insertUser: async function (user) {
-        try {
-            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("sdibook");
-            const collectionName = 'users';
-            const usersCollection = database.collection(collectionName);
-            const result = await usersCollection.insertOne(user);
-            return result.insertedId;
+            const limit = 5;
+            const usersCollectionCount = await this.userModel.count();
+            let result;
+            await this.userModel.find(filter, options).skip((page - 1) * limit).limit(limit).then((users) => {
+                result = {users: users, total: usersCollectionCount};
+            });
+            return result;
         } catch (error) {
             throw (error);
         }
