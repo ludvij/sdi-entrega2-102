@@ -1,0 +1,57 @@
+{% extends "layout.twig" %}
+
+{% block title %} Listado de usuarios {% endblock %}
+
+{% block main_container %}
+    <div class="container">
+        <h2>Usuarios</h2>
+        <p>Lista de usuarios:</p>
+
+        <form class="form-inline" action="/users/list">
+            <div class="form-group">
+                <input name="search" type="text" class="form-control" size="50"
+                       placeholder="Buscar por nombre, apellido o email">
+            </div>
+            <button type="submit" class="btn btn-primary" id="searchButton">Buscar</button>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableUsers">
+                <thead>
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                </tr>
+                </thead>
+                <tbody id="cuerpo">
+                {% for user in users %}
+                    <tr>
+                        <td scope="row">{{ user.email }}</td>
+                        <td scope="row">{{ user.name }}</td>
+                        <td scope="row">{{ user.surname }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                {% if search != null %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/users/list/?page={{ page }}&search={{ search }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/users/list/?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}

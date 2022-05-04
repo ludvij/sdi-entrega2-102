@@ -26,10 +26,16 @@ app.set("clave", "abcdefg");
 const adminSessionRouter = require("./routes/adminSessionRouter");
 const usersRepository = require("./repositories/usersRepository.js");
 app.use("/admin", adminSessionRouter);
+const userSessionRouter = require("./routes/userSessionRouter");
+app.use("/users", userSessionRouter);
+app.use("/friends", userSessionRouter);
+app.use("/publications", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
-require("./routes/users.js")(app, userModel);
-require("./routes/admin.js")(app, userModel, usersRepository);
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, userModel);
+require("./routes/users.js")(app, userModel, usersRepository);
+require("./routes/admin.js")(app, userModel);
 
 
 var indexRouter = require('./routes/index');
@@ -38,6 +44,8 @@ app.use('/', indexRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
+
+app.use('/', indexRouter);
 
 app.use(logger('dev'));
 app.use(express.json());
