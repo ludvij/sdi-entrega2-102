@@ -16,7 +16,7 @@ module.exports = {
     },getUsersPg: async function (filter, options, page) {
         try {
             const limit = 5;
-            const usersCollectionCount = await this.userModel.count();
+            const usersCollectionCount = await this.userModel.count(filter);
             let result;
             await this.userModel.find(filter, options).skip((page - 1) * limit).limit(limit).then((users) => {
                 result = {users: users, total: usersCollectionCount};

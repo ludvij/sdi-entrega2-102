@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 module.exports = function (app, userModel, usersRepository) {
     app.get('/signup', function (req, res) {
-        if(req.session.user == null){
+        if (req.session.user == null) {
             res.render("signup.twig");
-        } else{
+        } else {
             res.redirect("/");
         }
     });
     app.post('/signup', function (req, res) {
-        if(req.session.user == null){
+        if (req.session.user == null) {
             let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
                 .update(req.body.password).digest('hex');
             let repeatSecurePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
@@ -31,72 +31,76 @@ module.exports = function (app, userModel, usersRepository) {
         }
     });
     app.get('/login', function (req, res) {
-        if(req.session.user == null){
+        if (req.session.user == null) {
             res.render("login.twig");
         }
     })
     app.post('/login', async function (req, res) {
-            if(req.session.user == null){
-                let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-                    .update(req.body.password).digest('hex');
-                let filter = {
-                    email: req.body.email,
-                    password: securePassword
-                }
-
-                await usersRepository.findUser(filter,function (err, user) {
-                    if (err) {
-                        console.log(err)
-                    }
-                    if (user == null) {
-                        req.session.user = null;
-                        res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
-                    } else {
-                        req.session.user = user.email;
-                        console.log("logged in as " + user.name + "(" + req.session.user + ")");
-                        if(user.role === "ROLE_ADMIN"){
-                            res.redirect("/admin/list");
-                        } else{
-                            res.redirect("/users/list");
-                        }
-                    }
-                });
+        if (req.session.user == null) {
+            let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
+                .update(req.body.password).digest('hex');
+            let filter = {
+                email: req.body.email, password: securePassword
             }
+
+            await usersRepository.findUser(filter, function (err, user) {
+                if (err) {
+                    console.log(err)
+                }
+                if (user == null) {
+                    req.session.user = null;
+                    res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
+                } else {
+                    req.session.user = user.email;
+                    console.log("logged in as " + user.name + "(" + req.session.user + ")");
+                    if (user.role === "ROLE_ADMIN") {
+                        res.redirect("/admin/list");
+                    } else {
+                        res.redirect("/users/list");
+                    }
+                }
+            });
         }
-    )
+    })
     app.get('/logout', function (req, res) {
-        if(req.session.user != null){
+        if (req.session.user != null) {
             req.session.user = null;
             res.redirect("/login");
-        } else{
+        } else {
             res.redirect("/login");
         }
     })
     app.get('/users/list', async function (req, res) {
-            let filter = {
-                role: "ROLE_USER"
-            }
-            let options = {}
-            let page = parseInt(req.query.page);
-            if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
-                page = 1;
-            }
-            usersRepository.getUsersPg(filter, options, page).then(result => {
-                let lastPage = result.total / 5;
-                if (result.total % 5 > 0)
-                    lastPage = lastPage + 1;
-                let pages = [];
-                for (let i = page - 2; i <= page + 2; i++) {
-                    if (i > 0 && i <= lastPage) {
-                        pages.push(i);
-                    }
-                }
-                let response = {users: result.users, pages: pages, currentPage: page}
-                res.render("users/list.twig", response);
-            }).catch(error => {
-                res.send("Se ha producido un error al listar a los usuarios " + error)
-            });
+        let filter = {
+            role: "ROLE_USER",
+            email: {$ne: req.session.user}
         }
-    )
-    ;
+        let options = {}
+        // busqueda por nombre, apellido o email
+        if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
+            filter.$or = [{name: {$regex: ".*" + req.query.search + ".*", $options: 'i'}},
+                          {surname: {$regex: ".*" + req.query.search + ".*", $options: 'i'}},
+                          {email: {$regex: ".*" + req.query.search + ".*", $options: 'i'}}];
+        }
+
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        usersRepository.getUsersPg(filter, options, page).then(result => {
+            let lastPage = result.total / 5;
+            if (result.total % 5 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            let response = {users: result.users, pages: pages, currentPage: page, search: req.query.search}
+            res.render("users/list.twig", response);
+        }).catch(error => {
+            res.send("Se ha producido un error al listar a los usuarios " + error)
+        });
+    });
 }
