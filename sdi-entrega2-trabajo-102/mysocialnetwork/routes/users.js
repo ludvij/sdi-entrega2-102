@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-module.exports = function (app, userModel, usersRepository) {
+module.exports = function (app, usersRepository, friendshipRepository) {
     app.get('/signup', function (req, res) {
         if(req.session.user == null){
             res.render("signup.twig");
@@ -91,12 +90,50 @@ module.exports = function (app, userModel, usersRepository) {
                         pages.push(i);
                     }
                 }
-                let response = {users: result.users, pages: pages, currentPage: page}
-                res.render("users/list.twig", response);
+                usersRepository.findUser({email: req.session.user}, function(err, userFound) {
+                    filter = { $or: [{_id : userFound.requestSent},{_id : userFound.requestReceived}]}
+                    friendshipRepository.getFriendshipRequests(filter, {}, function(err, requests) {
+                        let friendshipRequest = [];
+                        requests.forEach((recu) => {
+                            if(recu.sender != userFound._id){
+                               friendshipRequest.push(recu.receiver.toString())
+                            } else {
+                                friendshipRequest.push(recu.sender.toString())
+                            }
+                        });
+                        console.log(friendshipRequest)
+                        let response = {users: result.users, pages: pages, currentPage: page, friendshipRequest: friendshipRequest}
+                        res.render("users/list.twig", response);
+                    })
+
+                })
             }).catch(error => {
                 res.send("Se ha producido un error al listar a los usuarios " + error)
             });
         }
-    )
-    ;
+    );
+    app.get('/users/list/send/:id', async function (req, res) {
+        await usersRepository.findUser({email : req.session.user}, function(err, senderUser) {
+            usersRepository.findUser({email : req.params.id}, function(err, receiverUser) {
+                if(!senderUser.friends.includes(receiverUser)){
+                    let filter = {
+                        $or : [{$and : [{receiver: senderUser},{sender: receiverUser}]},
+                            {$and : [{sender: senderUser},{receiver: receiverUser}]}]
+                    };
+                    let options = {};
+                    friendshipRepository.getFriendshipRequests(filter, options, function(err, friendshipRequests) {
+                        if(friendshipRequests.length == 0){
+                            friendshipRepository.addFriendshipRequest(senderUser, receiverUser, function(err, friendship) {
+                                senderUser.requestSent.push(friendship);
+                                receiverUser.requestReceived.push(friendship);
+                                senderUser.save();
+                                receiverUser.save();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        res.redirect("/users/list");
+    });
 }
