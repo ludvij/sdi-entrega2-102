@@ -4,7 +4,7 @@ module.exports = function (app, userModel, usersRepository) {
             if (err)
                 console.log(err);
             else
-                res.render('admin/list.twig', {users: users});
+                res.render('admin/list.twig', {users: users, admin: req.session.user});
         });
     });
 

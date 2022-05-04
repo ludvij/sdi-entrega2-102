@@ -30,10 +30,8 @@ module.exports = {
     }, deleteUser: async function (emails) {
         try {
             if (typeof emails === 'string') {
-                console.log("string")
                 await this.userModel.deleteOne({email: emails}).exec();
-            } else {
-                console.log("array")
+            } else if(emails != undefined) {
                 for (let i = 0; i < emails.length; i++) {
                     let email = emails[i]
                     await this.userModel.deleteOne({email: email}).exec();

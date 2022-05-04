@@ -23,7 +23,9 @@
                         <td scope="row">{{ user.email }}</td>
                         <td scope="row">{{ user.name }}</td>
                         <td scope="row">{{ user.surname }}</td>
+                        {% if admin != user.email %}
                         <td scope="row" ><input type="checkbox" name="users" value={{ user.email }} /> </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
