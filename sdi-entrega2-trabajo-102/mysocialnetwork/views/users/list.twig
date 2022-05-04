@@ -23,8 +23,8 @@
                         <td scope="row">{{ user.name }}</td>
                         <td scope="row">{{ user.surname }}</td>
                         <td scope="row">
-                            {% if {{user._id}} not in friendshipRequest %}
-                            <a class="btn btn-primary" href="/users/list/send/{{ user.email }}">Enviar solicitud {{ user._id }} {{ friendshipRequest }}</a>
+                            {% if user._id  not in friendshipRequest %}
+                            <a class="btn btn-primary" href="/users/list/send/{{ user.email }}">Enviar solicitud</a>
                             {% endif %}
                         </td>
                     </tr>

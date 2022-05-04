@@ -1,3 +1,4 @@
+const {ObjectId} = require("mongodb");
 module.exports = function (app, usersRepository, friendshipRepository) {
     app.get('/signup', function (req, res) {
         if(req.session.user == null){
@@ -101,8 +102,13 @@ module.exports = function (app, usersRepository, friendshipRepository) {
                                 friendshipRequest.push(recu.sender.toString())
                             }
                         });
-                        console.log(friendshipRequest)
-                        let response = {users: result.users, pages: pages, currentPage: page, friendshipRequest: friendshipRequest}
+                        var users2 = [];
+                        for (var i = 0; i < result.users.length; i++){
+                            let aux = JSON.stringify(result.users[i])
+                            let json = JSON.parse(aux)
+                            users2.push(json)
+                        }
+                        let response = {users: users2, pages: pages, currentPage: page, friendshipRequest: friendshipRequest}
                         res.render("users/list.twig", response);
                     })
 
