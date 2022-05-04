@@ -24,7 +24,6 @@ app.set("crypto", crypto);
 app.set("clave", "abcdefg");
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
-const usersRepository = require("./repositories/usersRepository.js");
 app.use("/admin", adminSessionRouter);
 const userSessionRouter = require("./routes/userSessionRouter");
 app.use("/users", userSessionRouter);
@@ -35,7 +34,7 @@ let userModel = require("./schemas/schema").User
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, userModel);
 require("./routes/users.js")(app, userModel, usersRepository);
-require("./routes/admin.js")(app, userModel);
+require("./routes/admin.js")(app, userModel, usersRepository);
 
 
 var indexRouter = require('./routes/index');
