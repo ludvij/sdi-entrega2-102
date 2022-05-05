@@ -108,6 +108,10 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
         if (req.session.user == null) {
             res.render("login.twig");
         }
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
         await usersRepository.findUser({email: req.session.user}, async function (err, user) {
             if (err) {
                 console.log(err)
@@ -115,11 +119,25 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             let requests = [];
             for (let i = 0; i < user.requestReceived.length; i++){
                 let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
-                console.log(request)
                 let sender = await usersRepository.findUserById(request.sender);
                 requests.push({requestId: request._id, sender})
             }
-            res.render("friendshipRequest/list.twig", {requests:requests})
+
+            //Paginación
+            let lastPage = requests.length / 5;
+            if (requests.length % 5 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            console.log(page)
+            let start = (page - 1) * (requests.length - 1);
+            let end = Math.min(start + 5, requests.length)
+            let requestsPaged = requests.slice(start, end);
+            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages})
 
         });
     })

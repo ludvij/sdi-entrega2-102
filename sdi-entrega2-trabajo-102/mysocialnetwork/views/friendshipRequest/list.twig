@@ -37,15 +37,9 @@
     <div class="row text-center">
         <ul class="pagination">
             {% for page in pages %}
-                {% if search != null %}
                     <li class="page-item" id="pi-{{ page }}">
-                        <a class="page-link" href="/users/list/?page={{ page }}&search={{ search }}">{{ page }}</a>
+                        <a class="page-link" href="/users/requests/list/?page={{ page }}">{{ page }}</a>
                     </li>
-                {% else %}
-                    <li class="page-item" id="pi-{{ page }}">
-                        <a class="page-link" href="/users/list/?page={{ page }}">{{ page }}</a>
-                    </li>
-                {% endif %}
             {% endfor %}
             <script>
                 $("#pi-" + "{{ currentPage }}").addClass("active");
