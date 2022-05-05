@@ -7,8 +7,6 @@ let crypto = require("crypto");
 
 let app = express();
 
-let indexRouter = require('./routes/index');
-
 let bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -36,7 +34,11 @@ let userModel = require("./schemas/schema").User
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, userModel);
 require("./routes/users.js")(app, userModel, usersRepository);
-require("./routes/admin.js")(app, userModel);
+require("./routes/admin.js")(app, userModel, usersRepository);
+
+
+var indexRouter = require('./routes/index');
+app.use('/', indexRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
