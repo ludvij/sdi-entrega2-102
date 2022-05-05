@@ -11,6 +11,7 @@ import com.uniovi.sdi.pageobjects.*;
 import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -35,6 +36,7 @@ class SdiEntrega2102ApplicationTests {
     private static MongoClient client;
     private static MongoDatabase database;
     private static MongoCollection<Document> doc;
+    private static MongoCollection<Document> friendshiprequesets;
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -51,6 +53,7 @@ class SdiEntrega2102ApplicationTests {
             client = MongoClients.create("mongodb+srv://admin:admin@sdibook.1ld9m.mongodb.net/sdibook?retryWrites=true&w=majority");
             database = client.getDatabase("sdibook");
             doc = database.getCollection("users");
+            friendshiprequesets = database.getCollection("friendshiprequests");
         } catch (MongoException me) {
             throw me;
         }
@@ -265,6 +268,24 @@ class SdiEntrega2102ApplicationTests {
         // Debería haber tres usuarios menos
         Assertions.assertEquals(usersList.size() - 3, usersListAfter.size());
         //Logout
+        PO_HomeView.logout(driver);
+
+    }
+
+    @Test
+    @Order(21)
+    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
+    // Comprobar con un listado que contenga varias invitaciones recibidas.
+    public void Prueba21() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de solicitudes
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
+        elements.get(0).click();
+        List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(2, requestList.size());
         PO_HomeView.logout(driver);
 
     }

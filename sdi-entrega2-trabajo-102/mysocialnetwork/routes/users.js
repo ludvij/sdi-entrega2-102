@@ -150,9 +150,12 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
                 console.log(err)
             }
             let requests = [];
+            console.log(user.requestReceived)
             for (let i = 0; i < user.requestReceived.length; i++){
                 let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
                 let sender = await usersRepository.findUserById(request.sender);
+                console.log(request)
+                console.log(sender)
                 requests.push({requestId: request._id, sender})
             }
 
@@ -169,7 +172,7 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             let start = (page - 1) * (requests.length - 1);
             let end = Math.min(start + 5, requests.length)
             let requestsPaged = requests.slice(start, end);
-            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages})
+            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages, user:req.session.user})
 
         });
     })
