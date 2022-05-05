@@ -21,6 +21,7 @@
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col">Apellidos</th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody id="cuerpo">
@@ -28,6 +29,10 @@
                     <tr>
                         <td scope="row">{{ request.sender.name }}</td>
                         <td scope="row">{{ request.sender.surname }}</td>
+                        <td scope="row"><div>
+                            <a class="btn btn-success" href="/users/requests/list/accept/{{ request.requestId }}">Aceptar</a>
+                            <a class="btn btn-danger" href="/users/requests/list/decline/{{ request.requestId }}">Rechazar</a>
+                        </div></td>
                     </tr>
                 {% endfor %}
                 </tbody>

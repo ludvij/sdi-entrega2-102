@@ -44,5 +44,24 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    }, setFriendship: async function (id, receiver, sender) {
+        let index = receiver.requestReceived.indexOf(id);
+        receiver.requestReceived.splice(index, 1);
+        index = sender.requestSent.indexOf(id);
+        sender.requestSent.splice(index, 1);
+
+        receiver.friends.push(sender._id);
+        sender.friends.push(receiver._id);
+
+        receiver.save();
+        sender.save();
+    }, deleteRequests: async function (id, receiver, sender) {
+        let index = receiver.requestReceived.indexOf(id);
+        receiver.requestReceived.splice(index, 1);
+        index = sender.requestSent.indexOf(id);
+        sender.requestSent.splice(index, 1);
+
+        receiver.save();
+        sender.save();
     }
 };

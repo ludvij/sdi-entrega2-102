@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {findUser} = require("../repositories/usersRepository");
 module.exports = function (app, userModel, usersRepository, friendshipRequestRepository) {
     app.get('/signup', function (req, res) {
         if (req.session.user == null) {
@@ -165,7 +166,6 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
                     pages.push(i);
                 }
             }
-            console.log(page)
             let start = (page - 1) * (requests.length - 1);
             let end = Math.min(start + 5, requests.length)
             let requestsPaged = requests.slice(start, end);
@@ -173,4 +173,42 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
 
         });
     })
+
+    app.get('/users/requests/list/accept/:id', async function (req, res) {
+        if (req.session.user != null) {
+           const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
+
+           const sender = await usersRepository.findUserById(request.sender);
+           const receiver = await usersRepository.findUserById(request.receiver);
+
+           if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
+               const request = await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
+               if (request.deletedCount > 0) {
+                   await usersRepository.setFriendship(req.params.id ,receiver, sender);
+                   res.redirect('/users/requests/list');
+               }
+           }
+        } else {
+            res.render("login.twig");
+        }
+    });
+
+    app.get('/users/requests/list/decline/:id', async function (req, res) {
+        if (req.session.user != null) {
+            const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
+
+            const sender = await usersRepository.findUserById(request.sender);
+            const receiver = await usersRepository.findUserById(request.receiver);
+
+            if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
+                const request = await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
+                if (request.deletedCount > 0) {
+                    await usersRepository.deleteRequests(req.params.id ,receiver, sender);
+                    res.redirect('/users/requests/list');
+                }
+            }
+        } else {
+            res.render("login.twig");
+        }
+    });
 }
