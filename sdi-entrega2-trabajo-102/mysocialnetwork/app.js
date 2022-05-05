@@ -33,10 +33,12 @@ app.use("/friends", userSessionRouter);
 app.use("/publications", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
+let postModel = require("./schemas/schema").Post
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, userModel);
 require("./routes/users.js")(app, userModel, usersRepository);
 require("./routes/admin.js")(app, userModel);
+require("./routes/posts.js")(app, postModel)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
