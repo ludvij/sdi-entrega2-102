@@ -26,6 +26,9 @@ module.exports = {
             throw (error);
         }
     },findUser: async function (filter, callback){
-        await this.userModel.findOne(filter).exec(callback);
+        return await this.userModel.findOne(filter).exec(callback);
+    },findUserById: async function(id) {
+        const response = await this.userModel.findById(id).exec();
+        return response;
     }
 };

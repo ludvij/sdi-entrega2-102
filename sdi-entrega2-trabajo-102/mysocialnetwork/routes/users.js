@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-module.exports = function (app, userModel, usersRepository) {
+module.exports = function (app, userModel, usersRepository, friendshipRequestRepository) {
     app.get('/signup', function (req, res) {
         if (req.session.user == null) {
             res.render("signup.twig");
@@ -103,4 +103,24 @@ module.exports = function (app, userModel, usersRepository) {
             res.send("Se ha producido un error al listar a los usuarios " + error)
         });
     });
+
+    app.get('/users/requests/list', async function (req, res) {
+        if (req.session.user == null) {
+            res.render("login.twig");
+        }
+        await usersRepository.findUser({email: req.session.user}, async function (err, user) {
+            if (err) {
+                console.log(err)
+            }
+            let requests = [];
+            for (let i = 0; i < user.requestReceived.length; i++){
+                let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
+                console.log(request)
+                let sender = await usersRepository.findUserById(request.sender);
+                requests.push({requestId: request._id, sender})
+            }
+            res.render("friendshipRequest/list.twig", {requests:requests})
+
+        });
+    })
 }
