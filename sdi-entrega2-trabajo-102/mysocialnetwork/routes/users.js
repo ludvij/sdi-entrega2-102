@@ -63,9 +63,9 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
                     req.session.user = null;
                     return res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
                 } else {
-                    req.session.user = user.email;
-                    console.log("logged in as " + user.name + "(" + req.session.user + ")");
-                    if (user.role === "ROLE_ADMIN") {
+                    req.session.user = user;
+                    console.log("logged in as " + req.session.user.name + "(" + req.session.user.email + ")");
+                    if (req.session.user.role === "ROLE_ADMIN") {
                         return res.redirect("/admin/list");
                     } else {
                         return res.redirect("/users/list");
@@ -145,17 +145,14 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        await usersRepository.findUser({email: req.session.user}, async function (err, user) {
+        await usersRepository.findUser({email: req.session.user.email}, async function (err, user) {
             if (err) {
                 console.log(err)
             }
             let requests = [];
-            console.log(user.requestReceived)
             for (let i = 0; i < user.requestReceived.length; i++){
                 let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
                 let sender = await usersRepository.findUserById(request.sender);
-                console.log(request)
-                console.log(sender)
                 requests.push({requestId: request._id, sender})
             }
 
