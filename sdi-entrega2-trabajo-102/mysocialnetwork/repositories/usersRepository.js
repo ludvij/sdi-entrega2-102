@@ -25,8 +25,12 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }, findUser: async function (filter, callback) {
-        await this.userModel.findOne(filter).exec(callback);
+    },findUser: async function (filter, callback){
+        return await this.userModel.findOne(filter).exec(callback);
+    },findUserById: async function(id) {
+        const response = await this.userModel.findById(id).exec();
+        return response;
+
     }, deleteUser: async function (emails) {
         try {
             if (typeof emails === 'string') {

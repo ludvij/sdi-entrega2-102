@@ -31,14 +31,20 @@ app.use("/friends", userSessionRouter);
 app.use("/publications", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
+let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
 const usersRepository = require("./repositories/usersRepository.js");
+const friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
 usersRepository.init(app, userModel);
-require("./routes/users.js")(app, userModel, usersRepository);
-require("./routes/admin.js")(app, userModel, usersRepository);
+
+friendshipRequestRepository.init(app, friendshipRequestModel)
+require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
+require("./routes/admin.js")(app, userModel);
+
 
 
 var indexRouter = require('./routes/index');
 app.use('/', indexRouter);
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

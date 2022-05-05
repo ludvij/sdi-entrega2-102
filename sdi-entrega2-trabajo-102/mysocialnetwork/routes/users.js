@@ -1,4 +1,5 @@
-module.exports = function (app, userModel, usersRepository) {
+const mongoose = require("mongoose");
+module.exports = function (app, userModel, usersRepository, friendshipRequestRepository) {
     app.get('/signup', function (req, res) {
         if (req.session.user == null) {
             res.render("signup.twig", {user: req.session.user});
@@ -134,4 +135,42 @@ module.exports = function (app, userModel, usersRepository) {
             res.send("Se ha producido un error al listar a los usuarios " + error)
         });
     });
+
+    app.get('/users/requests/list', async function (req, res) {
+        if (req.session.user == null) {
+            res.render("login.twig");
+        }
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        await usersRepository.findUser({email: req.session.user}, async function (err, user) {
+            if (err) {
+                console.log(err)
+            }
+            let requests = [];
+            for (let i = 0; i < user.requestReceived.length; i++){
+                let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
+                let sender = await usersRepository.findUserById(request.sender);
+                requests.push({requestId: request._id, sender})
+            }
+
+            //Paginación
+            let lastPage = requests.length / 5;
+            if (requests.length % 5 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            console.log(page)
+            let start = (page - 1) * (requests.length - 1);
+            let end = Math.min(start + 5, requests.length)
+            let requestsPaged = requests.slice(start, end);
+            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages})
+
+        });
+    })
 }
