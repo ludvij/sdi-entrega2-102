@@ -1,10 +1,10 @@
 module.exports = function (app, userModel, usersRepository) {
     app.get('/admin/list', async function (req, res) {
-        await userModel.find().exec(function (err, users) {
+        await userModel.find().sort({email: 1}).exec(function (err, users) {
             if (err)
                 console.log(err);
             else
-                res.render('admin/list.twig', {users: users, admin: req.session.user});
+                res.render('admin/list.twig', {users: users, user: req.session.user});
         });
     });
 

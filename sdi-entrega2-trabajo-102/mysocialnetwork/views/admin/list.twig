@@ -4,7 +4,7 @@
 
 {% block main_container %}
     <div class="container">
-        <h2>Usuarios</h2>
+        <h2>Lista de usuarios:</h2>
         <p>Los usuarios que actualmente figuran en el sistema son los siguientes:</p>
         <div class="table-responsive">
             <form action="/admin/delete" method="post">
@@ -18,13 +18,13 @@
                 </tr>
                 </thead>
                 <tbody id="cuerpo">
-                {% for user in users %}
+                {% for u in users %}
                     <tr>
-                        <td scope="row">{{ user.email }}</td>
-                        <td scope="row">{{ user.name }}</td>
-                        <td scope="row">{{ user.surname }}</td>
-                        {% if admin != user.email %}
-                        <td scope="row" ><input type="checkbox" name="users" value={{ user.email }} /> </td>
+                        <td scope="row">{{ u.email }}</td>
+                        <td scope="row">{{ u.name }}</td>
+                        <td scope="row">{{ u.surname }}</td>
+                        {% if user != u.email %}
+                        <td scope="row" ><input type="checkbox" name="users" value={{ u.email }} /> </td>
                         {% endif %}
                     </tr>
                 {% endfor %}
