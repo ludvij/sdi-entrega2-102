@@ -1,7 +1,7 @@
 module.exports = function (app, userModel, usersRepository) {
     app.get('/signup', function (req, res) {
         if (req.session.user == null) {
-            res.render("signup.twig");
+            res.render("signup.twig", {user: req.session.user});
         } else {
             res.redirect("/");
         }
@@ -36,7 +36,7 @@ module.exports = function (app, userModel, usersRepository) {
     });
     app.get('/login', function (req, res) {
         if (req.session.user == null) {
-            res.render("login.twig");
+            res.render("login.twig", {user: req.session.user});
         } else {
 			if (req.session.user.role === "ROLE_ADMIN") 
 				return res.redirect('/admin/list')
@@ -126,7 +126,8 @@ module.exports = function (app, userModel, usersRepository) {
 				users: result.users, 
 				pages: pages, 
 				currentPage: page, 
-				search: req.query.search
+				search: req.query.search,
+				user: req.session.user
 			}
             res.render("users/list.twig", response);
         }).catch(error => {

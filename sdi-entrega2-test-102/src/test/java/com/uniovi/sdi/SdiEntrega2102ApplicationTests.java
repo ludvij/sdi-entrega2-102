@@ -7,14 +7,17 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.uniovi.sdi.pageobjects.PO_LoginView;
-import com.uniovi.sdi.pageobjects.PO_SignUpView;
+import com.uniovi.sdi.pageobjects.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import com.uniovi.sdi.pageobjects.PO_HomeView;
+
+import java.sql.Time;
+import java.util.List;
 
 //Ordenamos las pruebas por la anotación @Order de cada método
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -135,6 +138,21 @@ class SdiEntrega2102ApplicationTests {
     public void PR08() {
         PO_LoginView.loginErrorAs(driver, "", "user01");
         PO_LoginView.loginErrorAs(driver, "user01@email.com", "asdad");
+    }
+
+    @Test
+    @Order(9)
+    // desconectarse
+    public void PR09() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(10)
+    // no sale botón de desconexión cuando no estás autenticado
+    public void PR10() {
+        Assertions.assertThrows(TimeoutException.class, () -> PO_NavView.logout(driver));
     }
 
 }

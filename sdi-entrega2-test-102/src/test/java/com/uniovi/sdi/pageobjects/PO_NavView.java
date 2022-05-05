@@ -29,5 +29,13 @@ public class PO_NavView  extends PO_View{
         Assertions.assertEquals(1, elements.size());
     }
 
+    public static void logout(WebDriver driver) {
+        //Vamos al formulario de registro
+        clickOption(driver, "logout", "class", "btn btn-primary");
+        //Rellenamos el formulario.
+        String text = "Identificación de usuario";
+        List<WebElement> result = checkElementBy(driver, "text", text);
+        Assertions.assertEquals(text, result.get(0).getText());
+    }
 }
 
