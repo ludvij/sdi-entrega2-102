@@ -28,10 +28,12 @@ app.use("/admin", adminSessionRouter);
 const userSessionRouter = require("./routes/userSessionRouter");
 app.use("/users", userSessionRouter);
 app.use("/friends", userSessionRouter);
-app.use("/publications", userSessionRouter);
+app.use("/posts", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
+let postModel = require("./schemas/schema").Post
 let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
+
 const usersRepository = require("./repositories/usersRepository.js");
 const friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
 usersRepository.init(app, userModel);
@@ -39,6 +41,7 @@ usersRepository.init(app, userModel);
 friendshipRequestRepository.init(app, friendshipRequestModel)
 require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
 require("./routes/admin.js")(app, userModel);
+require("./routes/posts.js")(app, postModel, userModel);
 
 
 
