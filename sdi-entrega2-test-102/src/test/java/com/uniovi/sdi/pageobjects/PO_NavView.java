@@ -1,6 +1,6 @@
-package notaneitor.pageobjects;
+package com.uniovi.sdi.pageobjects;
 
-import com.uniovi.notaneitor.util.SeleniumUtils;
+import com.uniovi.sdi.util.SeleniumUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,21 +29,5 @@ public class PO_NavView  extends PO_View{
         Assertions.assertEquals(1, elements.size());
     }
 
-
-    /**
-     * Selecciona el enlace de idioma correspondiente al texto textLanguage
-     * @param driver: apuntando al navegador abierto actualmente.
-     * @param textLanguage: el texto que aparece en el enlace de idioma ("English" o "Spanish")
-     */
-    public static void changeLanguage(WebDriver driver, String textLanguage) {
-        //clickamos la opción Idioma.
-        List<WebElement> languageButton = SeleniumUtils.waitLoadElementsBy(driver, "id", "btnLanguage", getTimeout());
-        languageButton.get(0).click();
-        //Esperamos a que aparezca el menú de opciones.
-        SeleniumUtils.waitLoadElementsBy(driver, "id", "languageDropdownMenuButton", getTimeout());
-        //CLickamos la opción textLanguage de idioma
-        List<WebElement> Selectedlanguage = SeleniumUtils.waitLoadElementsBy(driver, "id", textLanguage, getTimeout());
-        Selectedlanguage.get(0).click();
-    }
 }
 
