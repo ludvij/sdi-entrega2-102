@@ -26,7 +26,14 @@
             <ul class="nav navbar-nav">
                 <li id="users/list"><a href="/users/list">Usuarios</a></li>
                 <li id="myfriends"><a href="/friends">Amigos</a></li>
-                <li id="mypublications"><a href="/posts">Publicaciones</a></li>
+                <li id="posts-menu" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Posts</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/posts/add">Crear post</a>
+                        <a class="dropdown-item" href="/posts/listOwn">Mis posts</a>
+                    </div>
+                </li>
                 <li id="adminUsers-menu" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Gestión de usuarios</a>
@@ -36,33 +43,33 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-				<li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
-				<li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
-				{% if user != null %}
-					<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Desconectarte</a></li>
-				{% endif %}
+                <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                {% if user != null %}
+                    <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Desconectarte</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
 <div class="container">
-        <script>
-            let params = new URLSearchParams(location.search);
-            let message = params.get("message");
-            let messageType = params.get("messageType");
+    <script>
+        let params = new URLSearchParams(location.search);
+        let message = params.get("message");
+        let messageType = params.get("messageType");
 
-            if (message != null && message != "") {
-                if (messageType == "") {
-                    messageType = 'alert-info';
-                }
-                $(".container").append("<div class='alert " + messageType + "'>" + message + " </div>");
+        if (message != null && message != "") {
+            if (messageType == "") {
+                messageType = 'alert-info';
             }
-        </script>
-        <!-- Contenido -->
-        {% block main_container %}
-            <!-- Posible contenido por defecto -->
-        {% endblock %}
+            $(".container").append("<div class='alert " + messageType + "'>" + message + " </div>");
+        }
+    </script>
+    <!-- Contenido -->
+    {% block main_container %}
+        <!-- Posible contenido por defecto -->
+    {% endblock %}
 </div>
 
 </body>
