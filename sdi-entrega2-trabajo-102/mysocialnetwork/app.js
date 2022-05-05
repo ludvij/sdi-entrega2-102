@@ -36,14 +36,14 @@ let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
 
 const usersRepository = require("./repositories/usersRepository.js");
 const friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
+const postsRepository = require("./repositories/postsRepository");
+postsRepository.init(app, postModel);
 usersRepository.init(app, userModel);
 
 friendshipRequestRepository.init(app, friendshipRequestModel)
 require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
 require("./routes/admin.js")(app, userModel);
-require("./routes/posts.js")(app, postModel, userModel);
-
-
+require("./routes/posts.js")(app, postModel, userModel, postsRepository);
 
 var indexRouter = require('./routes/index');
 app.use('/', indexRouter);

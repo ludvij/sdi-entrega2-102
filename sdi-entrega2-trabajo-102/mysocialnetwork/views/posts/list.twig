@@ -1,0 +1,42 @@
+{% extends "layout.twig" %}
+
+{% block title %} Listado de posts {% endblock %}
+
+{% block main_container %}
+    <div class="container">
+        <h2>Posts</h2>
+        <p>Lista de posts:</p>
+
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableUsers">
+                <thead>
+                <tr>
+                    <th scope="col">Título</th>
+                    <th scope="col">Cuerpo</th>
+                </tr>
+                </thead>
+                <tbody id="cuerpo">
+                {% for post in posts %}
+                    <tr>
+                        <td scope="row">{{ post.title }}</td>
+                        <td scope="row">{{ post.body }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/posts/list/{{ id }}/?page={{ page }}">{{ page }}</a>
+                    </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}
