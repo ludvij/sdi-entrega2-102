@@ -4,7 +4,7 @@ module.exports = {
     init: function (app, userModel) {
         this.userModel = userModel;
         this.app = app;
-    }, createUser: function (body, securePassword, callback){
+    }, createUser: function (body, securePassword, callback) {
         let user = new this.userModel({
             email: body.email,
             name: body.name,
@@ -13,7 +13,7 @@ module.exports = {
             role: "ROLE_USER"
         });
         user.save(callback);
-    },getUsersPg: async function (filter, options, page) {
+    }, getUsersPg: async function (filter, options, page) {
         try {
             const limit = 5;
             const usersCollectionCount = await this.userModel.count(filter);
@@ -26,6 +26,23 @@ module.exports = {
             throw (error);
         }
     },findUser: async function (filter, callback){
-        await this.userModel.findOne(filter).exec(callback);
+        return await this.userModel.findOne(filter).exec(callback);
+    },findUserById: async function(id) {
+        const response = await this.userModel.findById(id).exec();
+        return response;
+
+    }, deleteUser: async function (emails) {
+        try {
+            if (typeof emails === 'string') {
+                await this.userModel.deleteOne({email: emails}).exec();
+            } else if(emails != undefined) {
+                for (let i = 0; i < emails.length; i++) {
+                    let email = emails[i]
+                    await this.userModel.deleteOne({email: email}).exec();
+                }
+            }
+        } catch (error) {
+            throw (error);
+        }
     }
 };

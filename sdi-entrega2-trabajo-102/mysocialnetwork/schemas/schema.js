@@ -9,6 +9,8 @@ const UserSchema = new Schema({
 	surname: {type: String, required: true},
 	role: {type: String, enum: ["ROLE_ADMIN", "ROLE_USER"], required: true},
 	friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
+	requestSent: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
+	requestReceived: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
 	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}]
 })
 

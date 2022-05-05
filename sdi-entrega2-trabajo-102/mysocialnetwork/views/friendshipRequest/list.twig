@@ -1,0 +1,49 @@
+{% extends "layout.twig" %}
+
+{% block title %} Listado de usuarios {% endblock %}
+
+{% block main_container %}
+    <div class="container">
+        <h2>Peticiones de amistad</h2>
+        <p>Lista de usuarios:</p>
+
+        <form class="form-inline" action="/users/list">
+            <div class="form-group">
+                <input name="search" type="text" class="form-control" size="50"
+                       placeholder="Buscar por nombre, apellido o email">
+            </div>
+            <button type="submit" class="btn btn-primary" id="searchButton">Buscar</button>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableUsers">
+                <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                </tr>
+                </thead>
+                <tbody id="cuerpo">
+                {% for request in requests %}
+                    <tr>
+                        <td scope="row">{{ request.sender.name }}</td>
+                        <td scope="row">{{ request.sender.surname }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/users/requests/list/?page={{ page }}">{{ page }}</a>
+                    </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}
