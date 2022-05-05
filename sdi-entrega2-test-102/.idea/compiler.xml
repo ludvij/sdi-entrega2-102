@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="sdi-entrega2-test-102" />
         <module name="sdi-entrega2-tst-n" />
       </profile>
     </annotationProcessing>
