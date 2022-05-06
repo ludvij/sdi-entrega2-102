@@ -7,8 +7,6 @@ let crypto = require("crypto");
 
 let app = express();
 
-let indexRouter = require('./routes/index');
-
 let bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -30,16 +28,27 @@ app.use("/admin", adminSessionRouter);
 const userSessionRouter = require("./routes/userSessionRouter");
 app.use("/users", userSessionRouter);
 app.use("/friends", userSessionRouter);
-app.use("/publications", userSessionRouter);
+app.use("/posts", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
+
+let postModel = require("./schemas/schema").Post
 let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
+
 const usersRepository = require("./repositories/usersRepository.js");
+const friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
+const postsRepository = require("./repositories/postsRepository");
+postsRepository.init(app, postModel);
 usersRepository.init(app, userModel);
-const friendshipRepository = require("./repositories/friendshipRepository.js");
-friendshipRepository.init(app, friendshipRequestModel);
-require("./routes/users.js")(app, usersRepository, friendshipRepository);
+
+friendshipRequestRepository.init(app, friendshipRequestModel)
+require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
 require("./routes/admin.js")(app, userModel);
+require("./routes/posts.js")(app, postModel, userModel, postsRepository);
+
+var indexRouter = require('./routes/index');
+app.use('/', indexRouter);
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

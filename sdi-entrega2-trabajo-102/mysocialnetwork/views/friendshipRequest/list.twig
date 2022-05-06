@@ -4,7 +4,7 @@
 
 {% block main_container %}
     <div class="container">
-        <h2>Usuarios</h2>
+        <h2>Peticiones de amistad</h2>
         <p>Lista de usuarios:</p>
 
         <form class="form-inline" action="/users/list">
@@ -19,23 +19,20 @@
             <table class="table table-hover" id="tableUsers">
                 <thead>
                 <tr>
-                    <th scope="col">Email</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Apellidos</th>
-                    <th scope="col">Amistad</th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody id="cuerpo">
-                {% for user in users %}
+                {% for request in requests %}
                     <tr>
-                        <td scope="row">{{ user.email }}</td>
-                        <td scope="row">{{ user.name }}</td>
-                        <td scope="row">{{ user.surname }}</td>
-                        <td scope="row">
-                            {% if user._id  not in friendshipRequest %}
-                            <a class="btn btn-primary" href="/users/list/send/{{ user.email }}">Enviar solicitud</a>
-                            {% endif %}
-                        </td>
+                        <td scope="row">{{ request.sender.name }}</td>
+                        <td scope="row">{{ request.sender.surname }}</td>
+                        <td scope="row"><div>
+                            <a class="btn btn-success" href="/users/requests/list/accept/{{ request.requestId }}">Aceptar</a>
+                            <a class="btn btn-danger" href="/users/requests/list/decline/{{ request.requestId }}">Rechazar</a>
+                        </div></td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -45,15 +42,9 @@
     <div class="row text-center">
         <ul class="pagination">
             {% for page in pages %}
-                {% if search != null %}
                     <li class="page-item" id="pi-{{ page }}">
-                        <a class="page-link" href="/users/list/?page={{ page }}&search={{ search }}">{{ page }}</a>
+                        <a class="page-link" href="/users/requests/list/?page={{ page }}">{{ page }}</a>
                     </li>
-                {% else %}
-                    <li class="page-item" id="pi-{{ page }}">
-                        <a class="page-link" href="/users/list/?page={{ page }}">{{ page }}</a>
-                    </li>
-                {% endif %}
             {% endfor %}
             <script>
                 $("#pi-" + "{{ currentPage }}").addClass("active");
