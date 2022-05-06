@@ -30,9 +30,6 @@ module.exports = {
     },
 	findUser: async function (filter, callback){		
         return await this.userModel.findOne(filter).exec(callback);
-	},
-	findUser: async function (filter, options, callback){
-		return await this.userModel.findOne(filter, options).exec(callback);
     },
 	findUserById: async function(id) {
         const response = await this.userModel.findById(id).exec();
