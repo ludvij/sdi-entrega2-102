@@ -24,6 +24,7 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
+                {% if user != null %}
                 <li id="users/list"><a href="/users/list">Usuarios</a></li>
                 <li id="myfriends"><a href="/friends">Amigos</a></li>
                 <li id="myrequests"><a href="/users/requests/list">Solicitudes</a></li>
@@ -35,6 +36,8 @@
                         <a class="dropdown-item" href="/posts/listOwn">Mis posts</a>
                     </div>
                 </li>
+                {% endif %}
+                {% if user.role == "ROLE_ADMIN" %}
                 <li id="adminUsers-menu" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Gestión de usuarios</a>
@@ -42,10 +45,13 @@
                         <a class="dropdown-item" href="/admin/list">Listar usuarios</a>
                     </div>
                 </li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if user == null %}
                 <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
                 <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                {% endif %}
                 {% if user != null %}
                     <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Desconectarte</a></li>
                 {% endif %}

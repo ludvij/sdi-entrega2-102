@@ -3,11 +3,11 @@ module.exports = function(app, postModel, userModel, postsRepository) {
         res.redirect("/posts/listOwn");
     });
     app.get("/posts/add", function(req, res) {
-        res.render("posts/add.twig");
+        res.render("posts/add.twig", {user: req.session.user});
     });
     app.post("/posts/add", async function(req, res) {
         let creatorUser;
-        await userModel.findOne({email: req.session.user}).exec(function (err, user) {
+        await userModel.findOne({email: req.session.user.email}).exec(function (err, user) {
             if (err) {
                 console.log(err);
             } else {
@@ -24,7 +24,7 @@ module.exports = function(app, postModel, userModel, postsRepository) {
     });
     app.get("/posts/listOwn", async function(req, res) {
         let userEmail = req.session.user;
-        await userModel.findOne({email: req.session.user}).exec(async function (err, user) {
+        await userModel.findOne({email: req.session.user.email}).exec(async function (err, user) {
             if (err) {
                 console.log(err);
             } else {

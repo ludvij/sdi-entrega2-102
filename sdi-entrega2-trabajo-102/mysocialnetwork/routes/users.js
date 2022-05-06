@@ -63,9 +63,9 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
                     req.session.user = null;
                     return res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
                 } else {
-                    req.session.user = user.email;
-                    console.log("logged in as " + user.name + "(" + req.session.user + ")");
-                    if (user.role === "ROLE_ADMIN") {
+                    req.session.user = user;
+                    console.log("logged in as " + req.session.user.name + "(" + req.session.user.email + ")");
+                    if (req.session.user.role === "ROLE_ADMIN") {
                         return res.redirect("/admin/list");
                     } else {
                         return res.redirect("/users/list");
@@ -89,58 +89,11 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             res.redirect("/login");
         }
     })
-    app.get('/users/list', async function (req, res) {
-        let filter = {
-            role: "ROLE_USER",
-            email: {$ne: req.session.user}
-        }
-        let options = {}
-        // busqueda por nombre, apellido o email
-        if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search != "") {
-            filter.$or = [
-				{name: 
-					{$regex: ".*" + req.query.search + ".*", $options: 'i'}
-				},
-				{surname: 
-					{$regex: ".*" + req.query.search + ".*", $options: 'i'}
-				},
-				{email: 
-					{$regex: ".*" + req.query.search + ".*", $options: 'i'}
-				}
-			];
-        }
-
-        let page = parseInt(req.query.page);
-        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
-            page = 1;
-        }
-        usersRepository.getUsersPg(filter, options, page).then(result => {
-            let lastPage = result.total / 5;
-            if (result.total % 5 > 0)
-                lastPage = lastPage + 1;
-            let pages = [];
-            for (let i = page - 2; i <= page + 2; i++) {
-                if (i > 0 && i <= lastPage) {
-                    pages.push(i);
-                }
-            }
-            let response = {
-				users: result.users, 
-				pages: pages, 
-				currentPage: page, 
-				search: req.query.search,
-				user: req.session.user
-			}
-            res.render("users/list.twig", response);
-        }).catch(error => {
-            res.send("Se ha producido un error al listar a los usuarios " + error)
-        });
-    });
 
     app.get('/users/list', async function (req, res) {
         let filter = {
             role: "ROLE_USER",
-            email: {$ne: req.session.user}
+            email: {$ne: req.session.user.email}
         }
         let options = {}
         // busqueda por nombre, apellido o email
@@ -209,7 +162,7 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        await usersRepository.findUser({email: req.session.user}, async function (err, user) {
+        await usersRepository.findUser({email: req.session.user.email}, async function (err, user) {
             if (err) {
                 console.log(err)
             }
@@ -233,7 +186,7 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             let start = (page - 1) * (requests.length - 1);
             let end = Math.min(start + 5, requests.length)
             let requestsPaged = requests.slice(start, end);
-            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages})
+            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages, user: req.session.user})
 
         });
     })
