@@ -8,8 +8,10 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi.pageobjects.*;
+import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -17,7 +19,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.sql.Time;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //Ordenamos las pruebas por la anotación @Order de cada método
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -32,6 +36,7 @@ class SdiEntrega2102ApplicationTests {
     private static MongoClient client;
     private static MongoDatabase database;
     private static MongoCollection<Document> doc;
+    private static MongoCollection<Document> friendshiprequesets;
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -48,6 +53,7 @@ class SdiEntrega2102ApplicationTests {
             client = MongoClients.create("mongodb+srv://admin:admin@sdibook.1ld9m.mongodb.net/sdibook?retryWrites=true&w=majority");
             database = client.getDatabase("sdibook");
             doc = database.getCollection("users");
+            friendshiprequesets = database.getCollection("friendshiprequests");
         } catch (MongoException me) {
             throw me;
         }
@@ -153,6 +159,135 @@ class SdiEntrega2102ApplicationTests {
     // no sale botón de desconexión cuando no estás autenticado
     public void PR10() {
         Assertions.assertThrows(TimeoutException.class, () -> PO_NavView.logout(driver));
+    }
+
+    @Test
+    @Order(12)
+    // Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
+    // y dicho usuario desaparece.
+    public void PR12(){
+        PO_LoginView.loginAs(driver, "admin@email.com", "admin");
+        // Recuperamos el usuario para volver a meterlo una vez lo borremos
+        Document user1 = doc.find(eq("email", "user01@email.com")).first();
+        // Usuarios antes de eliminar
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Marcamos el checkbox del primer usuario (sería el segundo porque el primero es el admin)
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[2]/td[4]/input");
+        elements.get(0).click();
+
+        // Le damos al botón de eliminar
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id='deleteButton']");
+        elements.get(0).click();
+
+        // Usuarios despues de eliminar
+        List<WebElement> usersListAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Debería haber un usuario menos
+        Assertions.assertEquals(usersList.size() - 1, usersListAfter.size());
+        //Logout
+        PO_HomeView.logout(driver);
+        // Volvemos a insertar el usuario
+        doc.insertOne(user1);
+    }
+
+    @Test
+    @Order(13)
+    // Ir a la lista de usuarios, borrar el último usuario de la lista, comprobar que la lista se actualiza
+    // y dicho usuario desaparece
+    public void PR13(){
+        PO_LoginView.loginAs(driver, "admin@email.com", "admin");
+
+        // Usuarios antes de eliminar
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Obtenemos el email del último usuario de la lista
+        String[] fila = usersList.get(usersList.size() - 1).getText().split(" ");
+        // Recuperamos el usuario en la última posición para volver a meterlo una vez lo borremos
+        Document user1 = doc.find(eq("email", fila[0])).first();
+        // Marcamos el checkbox del primer usuario (sería el segundo porque el primero es el admin)
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + usersList.size() + "]/td[4]/input");
+        elements.get(0).click();
+
+        // Le damos al botón de eliminar
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id='deleteButton']");
+        elements.get(0).click();
+
+        // Usuarios despues de eliminar
+        List<WebElement> usersListAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Debería haber un usuario menos
+        Assertions.assertEquals(usersList.size() - 1, usersListAfter.size());
+        //Logout
+        PO_HomeView.logout(driver);
+        // Volvemos a insertar el usuario
+        doc.insertOne(user1);
+    }
+
+    @Test
+    @Order(14)
+    // Ir a la lista de usuarios, borrar tres usuarios de la lista, comprobar que la lista se actualiza
+    // y dichos usuarios desaparecen
+    public void PR14(){
+        PO_LoginView.loginAs(driver, "admin@email.com", "admin");
+
+        // Usuarios antes de eliminar
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Obtenemos el email del último usuario de la lista
+        String[] fila1 = usersList.get(usersList.size() - 1).getText().split(" ");
+        String[] fila2 = usersList.get(usersList.size() - 2).getText().split(" ");
+        String[] fila3 = usersList.get(usersList.size() - 3).getText().split(" ");
+        // Recuperamos los usuarios para luego meterlos
+        Document user1 = doc.find(eq("email", fila1[0])).first();
+        Document user2 = doc.find(eq("email", fila2[0])).first();
+        Document user3 = doc.find(eq("email", fila3[0])).first();
+        // Marcamos las checkboxes del primer usuario (sería el segundo porque el primero es el admin)
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + usersList.size() + "]/td[4]/input");
+        elements.get(0).click();
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + (usersList.size() - 1) + "]/td[4]/input");
+        elements.get(0).click();
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + (usersList.size() - 2) + "]/td[4]/input");
+        elements.get(0).click();
+
+        // Le damos al botón de eliminar
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id='deleteButton']");
+        elements.get(0).click();
+
+        // Usuarios despues de eliminar
+        List<WebElement> usersListAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Volvemos a insertar los usuarios
+        doc.insertOne(user1);
+        doc.insertOne(user2);
+        doc.insertOne(user3);
+
+        // Debería haber tres usuarios menos
+        Assertions.assertEquals(usersList.size() - 3, usersListAfter.size());
+        //Logout
+        PO_HomeView.logout(driver);
+
+    }
+
+    @Test
+    @Order(21)
+    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
+    // Comprobar con un listado que contenga varias invitaciones recibidas.
+    public void Prueba21() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de solicitudes
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
+        elements.get(0).click();
+        List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(2, requestList.size());
+        PO_HomeView.logout(driver);
+
     }
 
 }

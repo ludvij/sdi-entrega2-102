@@ -43,7 +43,7 @@ usersRepository.init(app, userModel);
 
 friendshipRequestRepository.init(app, friendshipRequestModel)
 require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
-require("./routes/admin.js")(app, userModel);
+require("./routes/admin.js")(app, userModel, usersRepository);
 require("./routes/posts.js")(app, postModel, userModel, postsRepository);
 
 var indexRouter = require('./routes/index');
