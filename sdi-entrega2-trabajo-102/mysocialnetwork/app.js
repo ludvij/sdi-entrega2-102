@@ -4,7 +4,7 @@ let logger = require('morgan');
 let path = require('path');
 let createError = require('http-errors');
 let crypto = require("crypto");
-
+let jwt = require('jsonwebtoken')
 let app = express();
 
 let bodyParser = require("body-parser");
@@ -22,6 +22,8 @@ app.use(expressSession({
 }));
 app.set("crypto", crypto);
 app.set("clave", "abcdefg");
+app.set('jwt', jwt)
+app.set('jwt_secret', 'asjkl,.szdxjm,szdxm,')
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
 app.use("/admin", adminSessionRouter);
