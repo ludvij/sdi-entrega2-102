@@ -22,14 +22,22 @@
                     <th scope="col">Email</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Apellidos</th>
+                    <th scope="col">Amistad</th>
                 </tr>
                 </thead>
                 <tbody id="cuerpo">
-                {% for user in users %}
+                {% for u in users %}
                     <tr>
-                        <td scope="row">{{ user.email }}</td>
-                        <td scope="row">{{ user.name }}</td>
-                        <td scope="row">{{ user.surname }}</td>
+                        <td scope="row">{{ u.email }}</td>
+                        <td scope="row">{{ u.name }}</td>
+                        <td scope="row">{{ u.surname }}</td>
+                        <td scope="row">
+                            {% if u._id not in friendshipRequest %}
+                                {% if user.email != u.email %}
+                                    <a class="btn btn-primary" href="/users/list/send/{{ u.email }}">Enviar solicitud</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

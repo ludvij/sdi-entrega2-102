@@ -89,10 +89,11 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             res.redirect("/login");
         }
     })
+
     app.get('/users/list', async function (req, res) {
         let filter = {
             role: "ROLE_USER",
-            email: {$ne: req.session.user}
+            email: {$ne: req.session.user.email}
         }
         let options = {}
         // busqueda por nombre, apellido o email
@@ -124,14 +125,30 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
                     pages.push(i);
                 }
             }
-            let response = {
-				users: result.users, 
-				pages: pages, 
-				currentPage: page, 
-				search: req.query.search,
-				user: req.session.user
-			}
-            res.render("users/list.twig", response);
+            usersRepository.findUser({email: req.session.user.email}, function(err, userFound) {
+                filter = { $or: [{_id : userFound.requestSent},{_id : userFound.requestReceived}]}
+                friendshipRequestRepository.getFriendshipRequests(filter, {}, function(err, requests) {
+                    let friendshipRequest = [];
+                    requests.forEach((recu) => {
+                        if(recu.sender != userFound._id){
+                            friendshipRequest.push(recu.receiver.toString())
+                        } else {
+                            friendshipRequest.push(recu.sender.toString())
+                        }
+                    });
+                    var users2 = [];
+                    for (var i = 0; i < result.users.length; i++){
+                        let aux = JSON.stringify(result.users[i])
+                        let json = JSON.parse(aux)
+                        users2.push(json)
+                    }
+                    let response = {users: users2, pages: pages, currentPage: page, friendshipRequest: friendshipRequest,
+                        search: req.query.search,
+                        user: req.session.user}
+                    res.render("users/list.twig", response);
+                })
+
+            })
         }).catch(error => {
             res.send("Se ha producido un error al listar a los usuarios " + error)
         });
@@ -169,7 +186,7 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
             let start = (page - 1) * (requests.length - 1);
             let end = Math.min(start + 5, requests.length)
             let requestsPaged = requests.slice(start, end);
-            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages, user:req.session.user})
+            res.render("friendshipRequest/list.twig", {requests:requestsPaged, pages:pages, user: req.session.user})
 
         });
     })
@@ -210,5 +227,30 @@ module.exports = function (app, userModel, usersRepository, friendshipRequestRep
         } else {
             res.render("login.twig");
         }
+    });
+  
+  app.get('/users/list/send/:id', async function (req, res) {
+        await usersRepository.findUser({email : req.session.user.email}, function(err, senderUser) {
+            usersRepository.findUser({email : req.params.id}, function(err, receiverUser) {
+                if(!senderUser.friends.includes(receiverUser)){
+                    let filter = {
+                        $or : [{$and : [{receiver: senderUser},{sender: receiverUser}]},
+                            {$and : [{sender: senderUser},{receiver: receiverUser}]}]
+                    };
+                    let options = {};
+                    friendshipRequestRepository.getFriendshipRequests(filter, options, function(err, friendshipRequests) {
+                        if(friendshipRequests.length == 0){
+                            friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser, function(err, friendship) {
+                                senderUser.requestSent.push(friendship);
+                                receiverUser.requestReceived.push(friendship);
+                                senderUser.save();
+                                receiverUser.save();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        res.redirect("/users/list");
     });
 }

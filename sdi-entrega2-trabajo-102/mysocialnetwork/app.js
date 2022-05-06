@@ -31,6 +31,7 @@ app.use("/friends", userSessionRouter);
 app.use("/posts", userSessionRouter);
 
 let userModel = require("./schemas/schema").User
+
 let postModel = require("./schemas/schema").Post
 let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
 
