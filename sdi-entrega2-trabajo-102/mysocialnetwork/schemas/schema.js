@@ -9,8 +9,8 @@ const UserSchema = new Schema({
 	surname: {type: String, required: true},
 	role: {type: String, enum: ["ROLE_ADMIN", "ROLE_USER"], required: true},
 	friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
-	requestSent: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
-	requestReceived: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
+	// requestSent: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
+	// requestReceived: [{type: Schema.Types.ObjectId, ref:"FriendShipRequest"}],
 	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}]
 })
 
@@ -33,6 +33,34 @@ const FriendShipRequestSchema = new Schema({
 const User = mongoose.model('User', UserSchema)
 const Post =  mongoose.model('Post', PostSchema)
 const FriendShipRequest = mongoose.model('FriendShipRequest', FriendShipRequestSchema)
+// middlewares
+
+UserSchema.pre('deleteOne', {document:true, query:true}, async (next) => {
+	console.log("deleting junk")
+	const id = this._id
+	// delete posts
+	let posts = await Post.deleteMany({owner: id})
+	// remove self from others
+	let friends = await User.find({_id: {$in: this.friends}})
+	for(let friend of friends) {
+		let idx = friend.friends.indexOf(id)
+		friend.friends.splice(idx, 1)
+		await friend.save()
+		console.log('upadted: ' + friend)
+	}
+	
+	// delete requests sent
+	let reqs_send = await FriendShipRequest.deleteMany({sender: id})
+	// delete requests received
+	let reqs_rec = await FriendShipRequest.deleteMany({receiver: id})
+
+	console.log(posts)
+	console.log(reqs)
+
+})	
+
+
+
 
 module.exports.User = User
 module.exports.Post = Post
