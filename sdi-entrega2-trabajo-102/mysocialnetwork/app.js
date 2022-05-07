@@ -4,7 +4,7 @@ let logger = require('morgan');
 let path = require('path');
 let createError = require('http-errors');
 let crypto = require("crypto");
-
+let jwt = require('jsonwebtoken')
 let app = express();
 
 let bodyParser = require("body-parser");
@@ -22,6 +22,8 @@ app.use(expressSession({
 }));
 app.set("crypto", crypto);
 app.set("clave", "abcdefg");
+app.set('jwt', jwt)
+app.set('jwt_secret', 'asjkl,.szdxjm,szdxm,')
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
 app.use("/admin", adminSessionRouter);
@@ -42,9 +44,12 @@ postsRepository.init(app, postModel);
 usersRepository.init(app, userModel);
 
 friendshipRequestRepository.init(app, friendshipRequestModel)
-require("./routes/users.js")(app, userModel, usersRepository, friendshipRequestRepository);
+require("./routes/users.js")(app, usersRepository, friendshipRequestRepository);
+// TODO: use just the repo
 require("./routes/admin.js")(app, userModel, usersRepository);
 require("./routes/posts.js")(app, postModel, userModel, postsRepository);
+
+require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository)
 
 var indexRouter = require('./routes/index');
 app.use('/', indexRouter);

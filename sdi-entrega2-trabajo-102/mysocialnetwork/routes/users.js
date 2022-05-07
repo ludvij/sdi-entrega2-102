@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
-const {findUser} = require("../repositories/usersRepository");
-module.exports = function (app, userModel, usersRepository, friendshipRequestRepository) {
+module.exports = function (app, usersRepository, friendshipRequestRepository) {
     app.get('/signup', function (req, res) {
         if (req.session.user == null) {
             res.render("signup.twig", {user: req.session.user});
