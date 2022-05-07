@@ -3,10 +3,7 @@ package com.uniovi.sdi;
 import static com.mongodb.client.model.Filters.eq;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.uniovi.sdi.pageobjects.*;
 import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.Document;
@@ -155,6 +152,30 @@ class SdiEntrega2102ApplicationTests {
     // no sale botón de desconexión cuando no estás autenticado
     public void PR10() {
         Assertions.assertThrows(TimeoutException.class, () -> PO_NavView.logout(driver));
+    }
+
+    @Test
+    @Order(11)
+    // listado de usuarios, mostrar todos los que existen
+    public void PR11() {
+        PO_LoginView.loginAs(driver, "admin@email.com", "admin");
+        // Pinchamos en la opcion de gestión de usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "//*[@id=\"adminUsers-menu\"]");
+        elements.get(0).click();
+        // Esperamos a que aparezca la opción de ver usuarios
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"adminUsers-menu\"]/div/a");
+        elements.get(0).click();
+
+        long users = doc.countDocuments();
+
+        //Contamos el número de filas de usuarios
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(users, usersList.size());
+
+        PO_NavView.logout(driver);
     }
 
     @Test
