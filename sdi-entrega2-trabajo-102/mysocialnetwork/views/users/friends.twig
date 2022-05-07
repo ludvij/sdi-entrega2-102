@@ -18,7 +18,7 @@
                 <tbody id="cuerpo">
                 {% for f in friends %}
                     <tr>
-                        <td scope="row">{{ f.email }}</td>
+                        <td scope="row"><a href="/posts/list/{{ f.email }}"> {{ f.email }} </a></td>
                         <td scope="row">{{ f.name }}</td>
                         <td scope="row">{{ f.surname }}</td>
                     </tr>
