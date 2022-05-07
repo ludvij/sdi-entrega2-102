@@ -128,12 +128,16 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
                 friendshipRequestRepository.getFriendshipRequests(filter, {}, function(err, requests) {
                     let friendshipRequest = [];
                     requests.forEach((recu) => {
-                        if(recu.sender != userFound._id){
-                            friendshipRequest.push(recu.receiver.toString())
-                        } else {
+                        if(recu.sender.toString() != userFound._id){
                             friendshipRequest.push(recu.sender.toString())
+                        }else {
+                            friendshipRequest.push(recu.receiver.toString())
                         }
                     });
+                    userFound.friends.forEach((fr) => {
+                        friendshipRequest.push(fr.toString());
+                    })
+                    console.log(friendshipRequest)
                     var users2 = [];
                     for (var i = 0; i < result.users.length; i++){
                         let aux = JSON.stringify(result.users[i])
@@ -230,7 +234,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
   app.get('/users/list/send/:id', async function (req, res) {
         await usersRepository.findUser({email : req.session.user.email}, function(err, senderUser) {
             usersRepository.findUser({email : req.params.id}, function(err, receiverUser) {
-                if(!senderUser.friends.includes(receiverUser)){
+                if(!senderUser.friends.includes(receiverUser._id)){
                     let filter = {
                         $or : [{$and : [{receiver: senderUser},{sender: receiverUser}]},
                             {$and : [{sender: senderUser},{receiver: receiverUser}]}]
