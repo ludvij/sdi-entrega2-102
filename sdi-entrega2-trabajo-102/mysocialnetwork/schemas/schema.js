@@ -30,9 +30,17 @@ const FriendShipRequestSchema = new Schema({
 	receiver: {type: Schema.Types.ObjectId, ref: 'User', required: true},
 })
 
+const MessageSchema = new Schema({
+	sender: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+	receiver: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+	text: {type: String, required: true},
+	read: {type: Boolean, default: false}
+})
+
 const User = mongoose.model('User', UserSchema)
 const Post =  mongoose.model('Post', PostSchema)
 const FriendShipRequest = mongoose.model('FriendShipRequest', FriendShipRequestSchema)
+const Message = mongoose.model('Message', MessageSchema)
 
 module.exports.User = User
 module.exports.Post = Post

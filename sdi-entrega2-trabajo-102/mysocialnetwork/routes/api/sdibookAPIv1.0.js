@@ -1,7 +1,7 @@
 const {ObjectId} = require("mongodb");
 const {checkJWT} = require('./middleware/checkJWT')
 
-module.exports = function (app, usersRepository) {
+module.exports = function (app, usersRepository, messageRepository) {
 	app.get('/api/v1.0/friends', [checkJWT(app)], (req, res) => {
 		res.send('authenticated')
 	})
@@ -47,6 +47,22 @@ module.exports = function (app, usersRepository) {
 				message: "Se ha producido un error al verificar credenciales",
 				authenticated: false
 			})
+		}
+	})
+
+	app.post('/api/v1.0/messages', async (req, res) => {
+		try {
+			let message = {
+				sender: req.body.sender,
+				receiver: req.body.receiver,
+				text: req.body.text,
+				read: req.body.read
+			}
+			// TODO validar los datos
+			await messageRepository.createMessage(message);
+		} catch (e) {
+			res.status(500);
+			res.json({error: "Se ha producido un error al intentar crear la canción: " + e})
 		}
 	})
 }
