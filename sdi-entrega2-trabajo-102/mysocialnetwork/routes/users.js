@@ -87,7 +87,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         }
     })
 
-    app.get('/users/list', async function (req, res) {
+    app.get('/users/list', async (req, res) => {
         let filter = {
             role: "ROLE_USER",
             email: {$ne: req.session.user.email}
@@ -139,7 +139,6 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         req.session.user.friends.forEach((fr) => {
             friendshipRequest.push(fr.toString());
         })
-        console.log(friendshipRequest)
 		var users2 = [];
 
 		for (var i = 0; i < users.length; i++){
@@ -159,7 +158,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 
     });
 
-    app.get('/users/requests/list', async function (req, res) {
+    app.get('/users/requests/list', async (req, res) => {
         if (req.session.user == null) {
             res.render("login.twig");
         }
@@ -193,7 +192,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 
     })
 
-    app.get('/users/requests/list/accept/:id', async function (req, res) {
+    app.get('/users/requests/list/accept/:id', async (req, res) => {
         if (req.session.user != null) {
            const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
 
@@ -212,7 +211,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         }
     });
 
-    app.get('/users/requests/list/decline/:id', async function (req, res) {
+    app.get('/users/requests/list/decline/:id', async (req, res) => {
         if (req.session.user != null) {
             const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
 
@@ -251,7 +250,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		}
         res.redirect("/users/list");
     });
-    app.get('/friends', async function (req, res) {
+    app.get('/friends', async (req, res) => {
         let filter = {
             role: "ROLE_USER",
             email: req.session.user.email
@@ -262,20 +261,23 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         }
         let user = await usersRepository.findUser(filter);
         console.log(user)
-        usersRepository.getFriendsPg(page, user).then(result => {
-            let lastPage = result.total / 5;
-            if (result.total % 5 > 0)
-                lastPage = lastPage + 1;
-            let pages = [];
-            for (let i = page - 2; i <= page + 2; i++) {
-                if (i > 0 && i <= lastPage) {
-                    pages.push(i);
-                }
-            }
-            let response = {friends: result.users, pages: pages, currentPage: page}
-            res.render("users/friends.twig", response);
-        }).catch(error => {
-            res.send("Se ha producido un error al listar a los amigos " + error)
-        });
+		try {
+			let result = await usersRepository.getFriendsPg(page, user)
+			let lastPage = result.total / 5;
+			if (result.total % 5 > 0)
+				lastPage = lastPage + 1;
+			let pages = [];
+			for (let i = page - 2; i <= page + 2; i++) {
+				if (i > 0 && i <= lastPage) {
+					pages.push(i);
+				}
+			}
+			let response = {friends: result.users, pages: pages, currentPage: page}
+			res.render("users/friends.twig", response);
+
+		} catch (error) {
+
+			res.send("Se ha producido un error al listar a los amigos " + error)
+		}
     })
 }

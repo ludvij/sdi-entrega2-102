@@ -16,7 +16,6 @@ module.exports = function(app, usersRepository, postsRepository) {
 			let post = await postsRepository.create(postPlain)
 			res.redirect("/posts/listOwn");
 		} catch (error) {
-			console.log(error)
 			res.status(500).send(error)
 		}
 
@@ -51,7 +50,6 @@ module.exports = function(app, usersRepository, postsRepository) {
 			}
 			res.render("posts/listOwn.twig", response);
 		} catch(error) {
-			console.log(error)
 			res.status(500).send(error)
 		}
 	});
