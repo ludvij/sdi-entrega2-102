@@ -12,7 +12,7 @@ module.exports = {
 		let result;
 		let data = await Post.find(filter, options).skip((page - 1) * limit).limit(limit)
 		
-		return {data: posts, total: postsCollectionCount};
+		return {data: data, total: postsCollectionCount};
     },
 	create: async (body) => {
 		let post = new Post(body)

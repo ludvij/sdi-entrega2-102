@@ -7,7 +7,7 @@ userSessionRouter.use(function (req, res, next) {
         // dejamos correr la petición
         next();
     } else {
-        res.redirect('/users/login');
+        res.redirect('/login');
     }
 });
 module.exports = userSessionRouter;

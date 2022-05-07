@@ -7,7 +7,7 @@ module.exports = function(app, usersRepository, postsRepository) {
     });
     app.post("/posts/add", async function(req, res) {
 		try {
-			let creatorUser = await usersRepository.find({email: req.session.user.email})
+			let creatorUser = await usersRepository.findUser({email: req.session.user.email})
 			let postPlain = {
 				title: req.body.title,
 				body: req.body.body,
@@ -21,9 +21,9 @@ module.exports = function(app, usersRepository, postsRepository) {
 		}
 
     });
-    app.get("/posts/listOwn", async function(req, res) {
+    app.get("/posts/listOwn", async (req, res) => {
 		try {
-			let user = await usersRepository.find({email: req.session.user.email})
+			let user = await usersRepository.findUser({email: req.session.user.email})
 			let filter = {owner: user};
 			let options = {};
 			let page = parseInt(req.query.page);
