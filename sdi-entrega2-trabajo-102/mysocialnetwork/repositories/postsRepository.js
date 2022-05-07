@@ -6,6 +6,9 @@ module.exports = {
     init: function (app) {
         this.app = app;
     }, 
+	findPost: async (id, options={}) => {
+		return await Post.findById(id, options)
+	},
 	getPostsPg: async (filter, options, page) => {
 		const limit = 5;
 		const postsCollectionCount = await Post.count(filter);
