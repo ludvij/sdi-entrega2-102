@@ -343,6 +343,31 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(18)
+    // buscar con campo que exista
+    public void PR18() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de listar usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
+        elements.get(0).click();
+        WebElement searchText = driver.findElement(By.name("search"));
+        searchText.click();
+        searchText.clear();
+        searchText.sendKeys("al");
+        // Buscamos el boton de buscar y clickamos
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"searchButton\"]");
+        elements.get(0).click();
+        //Contamos el número de filas de usuarios
+        List<WebElement> searchList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        Assertions.assertEquals(4, searchList.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
     @Order(21)
     // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
     // Comprobar con un listado que contenga varias invitaciones recibidas.
