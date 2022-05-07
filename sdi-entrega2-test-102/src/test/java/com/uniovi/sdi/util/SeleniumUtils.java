@@ -118,4 +118,15 @@ public class SeleniumUtils {
 			}
 		}
 	}
+
+	/**
+	 * Aborta si el "texto" está presente en la página actual
+	 * @param driver: apuntando al navegador abierto actualmente.
+	 * @param xpath: elemento
+	 */
+	static public void elementIsNotPresentOnPage(WebDriver driver, String xpath)
+	{
+		List<WebElement> list = driver.findElements(By.xpath(xpath));
+		Assertions.assertEquals(0, list.size(), xpath + " no está presente !");
+	}
 }

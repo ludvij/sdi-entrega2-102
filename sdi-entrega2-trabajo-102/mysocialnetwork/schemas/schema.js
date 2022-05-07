@@ -30,7 +30,10 @@ const FriendShipRequestSchema = new Schema({
 	receiver: {type: Schema.Types.ObjectId, ref: 'User', required: true},
 })
 
+const User = mongoose.model('User', UserSchema)
+const Post =  mongoose.model('Post', PostSchema)
+const FriendShipRequest = mongoose.model('FriendShipRequest', FriendShipRequestSchema)
 
-module.exports.User = mongoose.model('User', UserSchema)
-module.exports.Post = mongoose.model('Post', PostSchema)
-module.exports.FriendShipRequest = mongoose.model('FriendShipRequest', FriendShipRequestSchema)
+module.exports.User = User
+module.exports.Post = Post
+module.exports.FriendShipRequest = FriendShipRequest

@@ -1,20 +1,21 @@
+const {Post} = require('../schemas/schema')
+
+
 module.exports = {
-    postModel: null,
     app: null,
-    init: function (app, postModel) {
-        this.postModel = postModel;
+    init: function (app) {
         this.app = app;
-    }, getPostsPg: async function (filter, options, page) {
-        try {
-            const limit = 5;
-            const postsCollectionCount = await this.postModel.count(filter);
-            let result;
-            await this.postModel.find(filter, options).skip((page - 1) * limit).limit(limit).then((posts) => {
-                result = {posts: posts, total: postsCollectionCount};
-            });
-            return result;
-        } catch (error) {
-            throw (error);
-        }
-    }
+    }, 
+	getPostsPg: async (filter, options, page) => {
+		const limit = 5;
+		const postsCollectionCount = await Post.count(filter);
+		let result;
+		let data = await Post.find(filter, options).skip((page - 1) * limit).limit(limit)
+		
+		return {data: data, total: postsCollectionCount};
+    },
+	create: async (body) => {
+		let post = new Post(body)
+		return await post.save()
+	}
 };
