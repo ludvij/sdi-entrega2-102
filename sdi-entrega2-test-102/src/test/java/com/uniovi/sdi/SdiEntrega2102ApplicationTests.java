@@ -426,8 +426,8 @@ class SdiEntrega2102ApplicationTests {
 
     @Test
     @Order(28)
-    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
-    // Comprobar con un listado que contenga varias invitaciones recibidas.
+    // Utilizando un accesio vía URL u otra alternativa, tratar de listar las publicaciones de un usuario que no sea
+    // amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
     public void Prueba28() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
