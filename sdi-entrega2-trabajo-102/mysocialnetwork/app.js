@@ -6,6 +6,7 @@ let createError = require('http-errors');
 let crypto = require("crypto");
 let jwt = require('jsonwebtoken')
 let app = express();
+
 let bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -24,29 +25,29 @@ app.set("clave", "abcdefg");
 app.set('jwt', jwt)
 app.set('jwt_secret', 'asjkl,.szdxjm,szdxm,')
 
-
-let usersRepository = require("./repositories/usersRepository.js");
-let friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
-let postsRepository = require("./repositories/postsRepository");
-
-postsRepository.init(app);
-usersRepository.init(app);
-friendshipRequestRepository.init(app)
-
 const adminSessionRouter = require("./routes/adminSessionRouter");
-const userSessionRouter = require("./routes/userSessionRouter");
-
 app.use("/admin", adminSessionRouter);
+const userSessionRouter = require("./routes/userSessionRouter");
 app.use("/users", userSessionRouter);
 app.use("/friends", userSessionRouter);
 app.use("/posts", userSessionRouter);
 
+let userModel = require("./schemas/schema").User
 
+let postModel = require("./schemas/schema").Post
+let friendshipRequestModel = require("./schemas/schema").FriendShipRequest
 
+const usersRepository = require("./repositories/usersRepository.js");
+const friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
+const postsRepository = require("./repositories/postsRepository");
+postsRepository.init(app, postModel);
+usersRepository.init(app, userModel);
+
+friendshipRequestRepository.init(app, friendshipRequestModel)
 require("./routes/users.js")(app, usersRepository, friendshipRequestRepository);
 // TODO: use just the repo
-require("./routes/admin.js")(app, usersRepository);
-require("./routes/posts.js")(app, usersRepository, postsRepository);
+require("./routes/admin.js")(app, userModel, usersRepository);
+require("./routes/posts.js")(app, postModel, userModel, postsRepository);
 
 require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository)
 

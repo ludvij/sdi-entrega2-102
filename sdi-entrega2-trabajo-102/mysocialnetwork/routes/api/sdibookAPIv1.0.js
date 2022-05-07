@@ -6,7 +6,7 @@ module.exports = function (app, usersRepository) {
 		res.send('authenticated')
 	})
 	// user beacuse you can't get users
-	app.post('/api/v1.0/user/login', async (req, res) => {
+	app.post('/api/v1.0/user/login', (req, res) => {
 		try {
 			let securePassword = app.get('crypto').createHmac('sha256', app.get('clave'))
 				.update(req.body.password).digest('hex')
@@ -14,12 +14,17 @@ module.exports = function (app, usersRepository) {
 				email: req.body.email,
 				password: securePassword
 			}
-			try {
-				let user = await usersRepository.findUser(filter)
+			usersRepository.findUser(filter, (err, user) => {
+				if (err) {
+					return res.status(401).json({
+						message: "Se ha producido un error al verificar credenciales",
+						authenticated: false
+					})
+				}
 				if (user == null) {
 					// unauthorized
 					return res.status(401).json({
-						message: 'Usuario o contraseña incorrecta',
+						message: 'Usuario no encontrado',
 						authenticated: false
 					})
 				} else {
@@ -33,15 +38,9 @@ module.exports = function (app, usersRepository) {
 						token: token
 					})
 				}
-				
-			} catch (err) {
-				return res.status(500).json({
-					message: "Se ha producido un error al verificar credenciales",
-					authenticated: false
-				})
-			}
-		}catch (error) {
-			return res.status(401).json({
+			})		
+		} catch (e) {
+			return res.status(500).json({
 				message: "Se ha producido un error al verificar credenciales",
 				authenticated: false
 			})
