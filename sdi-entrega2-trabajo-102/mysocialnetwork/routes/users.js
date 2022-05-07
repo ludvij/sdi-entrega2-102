@@ -255,4 +255,31 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         });
         res.redirect("/users/list");
     });
+    app.get('/friends', async function (req, res) {
+        let filter = {
+            role: "ROLE_USER",
+            email: req.session.user.email
+        }
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        await usersRepository.findUser(filter, function (err, user) {
+            usersRepository.getFriendsPg(page, user).then(result => {
+                let lastPage = result.total / 5;
+                if (result.total % 5 > 0)
+                    lastPage = lastPage + 1;
+                let pages = [];
+                for (let i = page - 2; i <= page + 2; i++) {
+                    if (i > 0 && i <= lastPage) {
+                        pages.push(i);
+                    }
+                }
+                let response = {friends: result.users, pages: pages, currentPage: page}
+                res.render("users/friends.twig", response);
+            }).catch(error => {
+                res.send("Se ha producido un error al listar a los amigos " + error)
+            });
+        })
+    })
 }

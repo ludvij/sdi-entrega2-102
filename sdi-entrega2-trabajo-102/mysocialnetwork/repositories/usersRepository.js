@@ -27,6 +27,18 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },getFriendsPg: async function (page, user) {
+        try {
+            const limit = 5;
+            const friendsCollectionCount = user.friends.length;
+            let result;
+            await this.userModel.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
+                result = {users: users, total: friendsCollectionCount};
+            });
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     },
 	findUser: async function (filter, callback){		
         return await this.userModel.findOne(filter).exec(callback);
@@ -34,8 +46,7 @@ module.exports = {
 	findUserById: async function(id) {
         const response = await this.userModel.findById(id).exec();
         return response;
-
-    }, 
+    },
 	deleteUser: async function (emails) {
         try {
             if (typeof emails === 'string') {
