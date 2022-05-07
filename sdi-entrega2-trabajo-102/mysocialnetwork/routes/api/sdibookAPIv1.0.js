@@ -23,14 +23,16 @@ module.exports = function (app, usersRepository) {
 						authenticated: false
 					})
 				} else {
-					let token = app.get('jwt').sign(
-						{user: user.email, time: Date.now() / 1000 },
-						app.get('jwt_secret')
-					)
+
+					const payload = {
+						user: user
+					}
+					let token = app.get('jwt').sign(payload, app.get('jwt_secret'),{expires_in: '1h'})
+
 					return res.status(200).json({
 						message: 'Usuario autorizado',
 						authenticated: true,
-						token: token
+						token: token,
 					})
 				}
 				
