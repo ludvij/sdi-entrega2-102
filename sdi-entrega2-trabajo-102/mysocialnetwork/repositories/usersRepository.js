@@ -69,7 +69,7 @@ module.exports = {
             const limit = 5;
             const friendsCollectionCount = user.friends.length;
             let result;
-            await this.userModel.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
+            await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
                 result = {users: users, total: friendsCollectionCount};
             });
             return result;

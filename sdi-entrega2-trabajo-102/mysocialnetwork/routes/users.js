@@ -130,13 +130,13 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		let requests = await friendshipRequestRepository.getFriendshipRequests(filter, {})
 		let friendshipRequest = [];
 		requests.forEach((recu) => {
-            if(recu.sender.toString() != userFound._id){
+            if(recu.sender.toString() != req.session.user._id){
                 friendshipRequest.push(recu.sender.toString())
             }else {
                 friendshipRequest.push(recu.receiver.toString())
             }
 		});
-        userFound.friends.forEach((fr) => {
+        req.session.user.friends.forEach((fr) => {
             friendshipRequest.push(fr.toString());
         })
         console.log(friendshipRequest)
@@ -260,22 +260,22 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        await usersRepository.findUser(filter, function (err, user) {
-            usersRepository.getFriendsPg(page, user).then(result => {
-                let lastPage = result.total / 5;
-                if (result.total % 5 > 0)
-                    lastPage = lastPage + 1;
-                let pages = [];
-                for (let i = page - 2; i <= page + 2; i++) {
-                    if (i > 0 && i <= lastPage) {
-                        pages.push(i);
-                    }
+        let user = await usersRepository.findUser(filter);
+        console.log(user)
+        usersRepository.getFriendsPg(page, user).then(result => {
+            let lastPage = result.total / 5;
+            if (result.total % 5 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
                 }
-                let response = {friends: result.users, pages: pages, currentPage: page}
-                res.render("users/friends.twig", response);
-            }).catch(error => {
-                res.send("Se ha producido un error al listar a los amigos " + error)
-            });
-        })
+            }
+            let response = {friends: result.users, pages: pages, currentPage: page}
+            res.render("users/friends.twig", response);
+        }).catch(error => {
+            res.send("Se ha producido un error al listar a los amigos " + error)
+        });
     })
 }
