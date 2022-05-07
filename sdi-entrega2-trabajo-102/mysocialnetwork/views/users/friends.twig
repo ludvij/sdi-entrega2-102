@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %} Listado de amigos {% endblock %}
+
+{% block main_container %}
+    <div class="container">
+        <h2>Amigos</h2>
+        <p>Lista de amigos:</p>
+        <div class="table-responsive">
+            <table class="table table-hover" id="tableFriends">
+                <thead>
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                </tr>
+                </thead>
+                <tbody id="cuerpo">
+                {% for f in friends %}
+                    <tr>
+                        <td scope="row">{{ f.email }}</td>
+                        <td scope="row">{{ f.name }}</td>
+                        <td scope="row">{{ f.surname }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                {% if search != null %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/friends/?page={{ page }}&search={{ search }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link" href="/friends/?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+{% endblock %}

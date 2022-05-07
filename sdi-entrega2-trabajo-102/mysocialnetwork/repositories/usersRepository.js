@@ -23,19 +23,19 @@ module.exports = {
 		let data = await User.find(filter, options)
 			.skip((page - 1) * limit)
 			.limit(limit)
-			
+
 		return {users: data, total: usersCollectionCount};
     },
 	findUsers: async (filter, options={}) => {
 		return await User.find(filter, options)
 	},
-	findUser: async (filter, options={}) => {	
-		console.log(this)	
+	findUser: async (filter, options={}) => {
+		console.log(this)
         return await User.findOne(filter, options);
     },
 	findUserById: async function(id, options={}) {
         return await User.findById(id, options);
-    }, 
+    },
 	deleteUser: async (emails) => {
 		if (typeof emails === 'string') {
 			await User.deleteOne({email: emails});
@@ -64,5 +64,17 @@ module.exports = {
 
         await receiver.save();
         await sender.save();
+    },getFriendsPg: async function (page, user) {
+        try {
+            const limit = 5;
+            const friendsCollectionCount = user.friends.length;
+            let result;
+            await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
+                result = {users: users, total: friendsCollectionCount};
+            });
+            return result;
+        } catch (error) {
+            throw (error);
+        }
     }
 };

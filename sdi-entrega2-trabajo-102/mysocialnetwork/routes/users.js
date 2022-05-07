@@ -68,7 +68,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			} catch (error) {
 				console.log(error)
 				res.status(500).send(error)
-			}     
+			}
         }
 		else {
 			if (req.session.user.role === "ROLE_ADMIN") 
@@ -118,24 +118,28 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			}
 		}
 		// can't be null
-		let user = await usersRepository.findUser({email: req.session.user.email}) 
-		filter = { 
+		let user = await usersRepository.findUser({email: req.session.user.email})
+		filter = {
 			$or: [
 				{_id : user.requestSent},
 				{_id : user.requestReceived}
 			]
 		}
-	
+
 		// get friendship request from user
 		let requests = await friendshipRequestRepository.getFriendshipRequests(filter, {})
 		let friendshipRequest = [];
 		requests.forEach((recu) => {
-			if(recu.sender != user._id){
-				friendshipRequest.push(recu.receiver.toString())
-			} else {
-				friendshipRequest.push(recu.sender.toString())
-			}
+            if(recu.sender.toString() != req.session.user._id){
+                friendshipRequest.push(recu.sender.toString())
+            }else {
+                friendshipRequest.push(recu.receiver.toString())
+            }
 		});
+        req.session.user.friends.forEach((fr) => {
+            friendshipRequest.push(fr.toString());
+        })
+        console.log(friendshipRequest)
 		var users2 = [];
 
 		for (var i = 0; i < users.length; i++){
@@ -144,9 +148,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			users2.push(json)
 		}
 		let response = {
-			users: users2, 
-			pages: pages, 
-			currentPage: page, 
+			users: users2,
+			pages: pages,
+			currentPage: page,
 			friendshipRequest: friendshipRequest,
 			search: req.query.search,
 			user: req.session.user
@@ -164,7 +168,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
             page = 1;
         }
         let user = await usersRepository.findUser({email: req.session.user.email})
-		
+
 		let requests = [];
 		for (let i = 0; i < user.requestReceived.length; i++){
 			let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
@@ -246,5 +250,32 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			}
 		}
         res.redirect("/users/list");
-	});
+    });
+    app.get('/friends', async function (req, res) {
+        let filter = {
+            role: "ROLE_USER",
+            email: req.session.user.email
+        }
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
+            page = 1;
+        }
+        let user = await usersRepository.findUser(filter);
+        console.log(user)
+        usersRepository.getFriendsPg(page, user).then(result => {
+            let lastPage = result.total / 5;
+            if (result.total % 5 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage) {
+                    pages.push(i);
+                }
+            }
+            let response = {friends: result.users, pages: pages, currentPage: page}
+            res.render("users/friends.twig", response);
+        }).catch(error => {
+            res.send("Se ha producido un error al listar a los amigos " + error)
+        });
+    })
 }
