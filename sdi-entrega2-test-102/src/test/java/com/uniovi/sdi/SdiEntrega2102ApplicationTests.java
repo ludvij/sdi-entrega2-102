@@ -9,6 +9,7 @@ import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -294,6 +295,7 @@ class SdiEntrega2102ApplicationTests {
     // buscar con campo vacío y mostrar todos los usuarios
     public void PR16() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
         // Pinchamos en la opcion de listar usuarios
         List<WebElement> elements = PO_View.checkElementBy(driver, "free",
                 "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
@@ -313,6 +315,29 @@ class SdiEntrega2102ApplicationTests {
         long users = doc.countDocuments();
 
         Assertions.assertEquals(users - 2, searchList.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(17)
+    // buscar con campo que no exista
+    public void PR17() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de listar usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
+        elements.get(0).click();
+        WebElement searchText = driver.findElement(By.name("search"));
+        searchText.click();
+        searchText.clear();
+        searchText.sendKeys("usuarionoexistente");
+        // Buscamos el boton de buscar y clickamos
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"searchButton\"]");
+        elements.get(0).click();
+        // Comprobamos que la tabla no tiene ningún elemento
+        SeleniumUtils.elementIsNotPresentOnPage(driver, "//tbody/tr");
 
         PO_NavView.logout(driver);
     }
