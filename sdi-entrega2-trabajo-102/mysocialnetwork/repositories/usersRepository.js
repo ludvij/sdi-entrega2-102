@@ -53,8 +53,8 @@ module.exports = {
         receiver.friends.push(sender._id);
         sender.friends.push(receiver._id);
 
-        receiver.save();
-        sender.save();
+    	await receiver.save();
+        await sender.save();
     }, 
 	deleteRequests: async (id, receiver, sender) => {
         let index = receiver.requestReceived.indexOf(id);
@@ -62,7 +62,7 @@ module.exports = {
         index = sender.requestSent.indexOf(id);
         sender.requestSent.splice(index, 1);
 
-        receiver.save();
-        sender.save();
+        await receiver.save();
+        await sender.save();
     }
 };

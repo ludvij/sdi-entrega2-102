@@ -11,6 +11,6 @@ module.exports = {
             sender: sender,
             receiver: receiver
         });
-        friendshipReq.save(callback);
+        await friendshipReq.save(callback);
     }
 };
