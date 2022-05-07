@@ -3,15 +3,13 @@ package com.uniovi.sdi;
 import static com.mongodb.client.model.Filters.eq;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.uniovi.sdi.pageobjects.*;
 import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -158,6 +156,30 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(11)
+    // listado de usuarios, mostrar todos los que existen
+    public void PR11() {
+        PO_LoginView.loginAs(driver, "admin@email.com", "admin");
+        // Pinchamos en la opcion de gestión de usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "//*[@id=\"adminUsers-menu\"]");
+        elements.get(0).click();
+        // Esperamos a que aparezca la opción de ver usuarios
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"adminUsers-menu\"]/div/a");
+        elements.get(0).click();
+
+        long users = doc.countDocuments();
+
+        //Contamos el número de filas de usuarios
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(users, usersList.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
     @Order(12)
     // Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
     // y dicho usuario desaparece.
@@ -266,6 +288,83 @@ class SdiEntrega2102ApplicationTests {
         //Logout
         PO_HomeView.logout(driver);
 
+    }
+
+    @Test
+    @Order(16)
+    // buscar con campo vacío y mostrar todos los usuarios
+    public void PR16() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de listar usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
+        elements.get(0).click();
+        // Buscamos el boton de buscar y clickamos
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"searchButton\"]");
+        elements.get(0).click();
+        //Contamos el número de filas de usuarios
+        List<WebElement> searchList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "/html/body/div/div[2]/ul/li[2]/a").get(0).click();
+        searchList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+
+        //Cogemos la lista con todos los usuarios
+        long users = doc.countDocuments();
+
+        Assertions.assertEquals(users - 2, searchList.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(17)
+    // buscar con campo que no exista
+    public void PR17() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de listar usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
+        elements.get(0).click();
+        WebElement searchText = driver.findElement(By.name("search"));
+        searchText.click();
+        searchText.clear();
+        searchText.sendKeys("usuarionoexistente");
+        // Buscamos el boton de buscar y clickamos
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"searchButton\"]");
+        elements.get(0).click();
+        // Comprobamos que la tabla no tiene ningún elemento
+        SeleniumUtils.elementIsNotPresentOnPage(driver, "//tbody/tr");
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(18)
+    // buscar con campo que exista
+    public void PR18() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de listar usuarios
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free",
+                "/html/body/nav/div/div[2]/ul[1]/li[1]/a");
+        elements.get(0).click();
+        WebElement searchText = driver.findElement(By.name("search"));
+        searchText.click();
+        searchText.clear();
+        searchText.sendKeys("al");
+        // Buscamos el boton de buscar y clickamos
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"searchButton\"]");
+        elements.get(0).click();
+        //Contamos el número de filas de usuarios
+        List<WebElement> searchList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        Assertions.assertEquals(4, searchList.size());
+
+        PO_NavView.logout(driver);
     }
 
     @Test
