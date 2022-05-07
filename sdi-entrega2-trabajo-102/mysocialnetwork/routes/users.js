@@ -260,7 +260,6 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
             page = 1;
         }
         let user = await usersRepository.findUser(filter);
-        console.log(user)
 		try {
 			let result = await usersRepository.getFriendsPg(page, user)
 			let lastPage = result.total / 5;
