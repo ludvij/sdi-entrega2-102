@@ -1,7 +1,6 @@
 const {User} = require('../schemas/schema')
 
 module.exports = {
-    userModel: null,
     app: null,
     init: function (app) {
         this.app = app;
@@ -64,17 +63,13 @@ module.exports = {
 
         await receiver.save();
         await sender.save();
-    },getFriendsPg: async function (page, user) {
-        try {
-            const limit = 5;
-            const friendsCollectionCount = user.friends.length;
-            let result;
-            await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
-                result = {users: users, total: friendsCollectionCount};
-            });
-            return result;
-        } catch (error) {
-            throw (error);
-        }
+    },
+	getFriendsPg: async function (page, user) {
+		const limit = 5;
+		const friendsCollectionCount = user.friends.length;
+		let data =  await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit)
+
+		return {users: data, total: friendsCollectionCount};
+       
     }
 };
