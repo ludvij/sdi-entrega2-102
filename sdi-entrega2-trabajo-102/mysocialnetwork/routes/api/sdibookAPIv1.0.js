@@ -1,7 +1,7 @@
 const {ObjectId} = require("mongodb");
 const {checkJWT} = require('./middleware/checkJWT')
 
-module.exports = function (app, usersRepository) {
+module.exports = function (app, usersRepository, messageRepository) {
 	app.get('/api/v1.0/friends', [checkJWT(app)], (req, res) => {
 		res.send('authenticated')
 	})
