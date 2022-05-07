@@ -34,6 +34,7 @@ class SdiEntrega2102ApplicationTests {
     private static MongoDatabase database;
     private static MongoCollection<Document> doc;
     private static MongoCollection<Document> friendshiprequesets;
+    private static MongoCollection<Document> postDocument;
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -51,6 +52,7 @@ class SdiEntrega2102ApplicationTests {
             database = client.getDatabase("sdibook");
             doc = database.getCollection("users");
             friendshiprequesets = database.getCollection("friendshiprequests");
+            postDocument = database.getCollection("posts");
         } catch (MongoException me) {
             throw me;
         }
@@ -388,6 +390,53 @@ class SdiEntrega2102ApplicationTests {
         Assertions.assertEquals(2, requestList.size());
         PO_HomeView.logout(driver);
 
+    }
+
+    @Test
+    @Order(27)
+    // Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas las que existen para
+    // dicho usuario
+    public void Prueba27() throws InterruptedException {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Pinchamos en la opcion de amigos
+        List<WebElement> elements = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"myfriends\"]/a",
+                PO_View.getTimeout());
+        elements.get(0).click();
+
+        // Obtenemos las filas para coger el nombre del usuario al que vamos a ver sus publicaciones
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Obtenemos el usuario, para luego comparar las filas de publicaciones que salen con las que tenga asociadas
+        // el usuario
+        Document friend = doc.find(eq("email", usersList.get(0).getText().split(" ")[0])).first();
+        System.out.println(friend);
+        // Pinchamos en el nombre del usuario
+        elements = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[1]/a",
+                PO_View.getTimeout());
+        elements.get(0).click();
+        // Vemos cuántas filas hay
+        List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        List<Object> userPosts = (List<Object>) friend.get("posts");
+        Assertions.assertEquals(userPosts.size(), posts.size());
+        PO_HomeView.logout(driver);
+
+    }
+
+    @Test
+    @Order(28)
+    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
+    // Comprobar con un listado que contenga varias invitaciones recibidas.
+    public void Prueba28() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Probamos a entrar mediante url a las publicaciones de un usuario que no es amigo del usuario identificado.
+        // En este caso el ID pasado no existe.
+        driver.navigate().to("http://localhost:3000/posts/list/randomuser@email.com");
+
+        // Comprobar que sale un error de autorización
+        PO_View.checkError(driver);
     }
 
 }

@@ -139,7 +139,6 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         req.session.user.friends.forEach((fr) => {
             friendshipRequest.push(fr.toString());
         })
-        console.log(friendshipRequest)
 		var users2 = [];
 
 		for (var i = 0; i < users.length; i++){
@@ -261,7 +260,6 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
             page = 1;
         }
         let user = await usersRepository.findUser(filter);
-        console.log(user)
         usersRepository.getFriendsPg(page, user).then(result => {
             let lastPage = result.total / 5;
             if (result.total % 5 > 0)
@@ -272,7 +270,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
                     pages.push(i);
                 }
             }
-            let response = {friends: result.users, pages: pages, currentPage: page}
+            let response = {friends: result.users, pages: pages, currentPage: page, user: req.session.user}
             res.render("users/friends.twig", response);
         }).catch(error => {
             res.send("Se ha producido un error al listar a los amigos " + error)

@@ -14,6 +14,7 @@
                 <tr>
                     <th scope="col">Título</th>
                     <th scope="col">Cuerpo</th>
+                    <th scope="col">Creado el</th>
                 </tr>
                 </thead>
                 <tbody id="cuerpo">
@@ -21,6 +22,7 @@
                     <tr>
                         <td scope="row">{{ post.title }}</td>
                         <td scope="row">{{ post.body }}</td>
+                        <td scope="row">{{ post.createdAt }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
