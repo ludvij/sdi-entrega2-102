@@ -106,7 +106,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
             page = 1;
         }
 		// get users in page
-        let {users, total} = await usersRepository.getUsersPg(filter, {}, page)
+        let {users, total} = await usersRepository.getUsersPg(filter, 'name email surname', page)
 		// ???
 		let lastPage = total / 5;
 		if (total % 5 > 0)

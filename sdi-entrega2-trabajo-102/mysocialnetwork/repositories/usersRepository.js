@@ -18,9 +18,12 @@ module.exports = {
 	getUsersPg: async (filter, options, page) => {
 		const limit = 5;
 		const usersCollectionCount = await User.count(filter);
+		let num = (page - 1) * limit
 
 		let data = await User.find(filter, options)
-			.skip((page - 1) * limit)
+			.sort({email:1, name:1})
+			.collation({locale:'es', numericOrdering:true})
+			.skip(num)
 			.limit(limit)
 
 		return {users: data, total: usersCollectionCount};
