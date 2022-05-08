@@ -6,9 +6,10 @@ module.exports = function (app, usersRepository, messageRepository) {
 		const {user} = res.locals.jwtPayload
 		let {friends} = await usersRepository.findAndPopulate({_id: user._id}, 'friends')
 		friends.sort((a, b) => {
-			if (a.name < b.name) return -1
-			else if (a.name == b.name) return 0
-			else return 1
+			return a.name.localeCompare(b.name, undefined, {
+				numeric: true,
+				sensitivity: 'base'
+			})
 		})
 		return res.send(friends)
 		

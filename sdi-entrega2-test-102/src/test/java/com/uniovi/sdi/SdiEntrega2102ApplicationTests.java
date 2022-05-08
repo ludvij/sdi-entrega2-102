@@ -154,6 +154,13 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(10)
+    // no sale botón de desconexión cuando no estás autenticado
+    public void PR10() {
+        Assertions.assertThrows(TimeoutException.class, () -> PO_NavView.logout(driver));
+    }
+
+    @Test
     @Order(11)
     // listado de usuarios, mostrar todos los que existen
     public void PR11() {
@@ -177,12 +184,6 @@ class SdiEntrega2102ApplicationTests {
         PO_NavView.logout(driver);
     }
 
-    @Test
-    @Order(10)
-    // no sale botón de desconexión cuando no estás autenticado
-    public void PR10() {
-        Assertions.assertThrows(TimeoutException.class, () -> PO_NavView.logout(driver));
-    }
 
     @Test
     @Order(12)

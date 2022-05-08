@@ -35,7 +35,7 @@ module.exports = {
         return await User.findById(id, options);
     },
 	deleteUser: async (emails) => {
-		if (typeof emails === 'string') {
+		if (typeof emails == 'string') {
 			await User.deleteOne({email: emails});
 		} else if(emails != undefined) {
 			// usage of mongoose thing
@@ -53,9 +53,9 @@ module.exports = {
 	getFriendsPg: async (page, user) => {
 		const limit = 5;
 		const friendsCollectionCount = user.friends.length;
-		let data =  await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit)
+		let {friends} = await User.findById(user._id).populate('friends').skip((page - 1) * limit).limit(limit)
 
-		return {users: data, total: friendsCollectionCount};
+		return {users: friends, total: friendsCollectionCount};
        
     },
 	findAndPopulate: async (filter, options={}) => {
