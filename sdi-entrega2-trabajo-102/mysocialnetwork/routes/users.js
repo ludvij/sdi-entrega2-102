@@ -107,6 +107,11 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         }
 		// get users in page
         let {users, total} = await usersRepository.getUsersPg(filter, {}, page)
+		users.sort((a,b) => {
+			if (a.email < b.email) return -1
+			else if (a.email === b.email) return 0
+			else return 1
+		})
 		// ???
 		let lastPage = total / 5;
 		if (total % 5 > 0)
@@ -119,10 +124,13 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		}
 		// can't be null
 		let user = await usersRepository.findUser({email: req.session.user.email})
+
 		filter = {
 			$or: [
-				{_id : user.requestSent},
-				{_id : user.requestReceived}
+				{sender : user._id},
+				{receiver : user._id},
+				{sender: req.session.user._id},
+				{receiver: req.session.user._id}
 			]
 		}
 
@@ -264,7 +272,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					pages.push(i);
 				}
 			}
-			let response = {friends: result.users, pages: pages, currentPage: page}
+			let response = {friends: result.users, pages: pages, currentPage: page, user: req.session.user}
 			res.render("users/friends.twig", response);
 
 		} catch (error) {
