@@ -378,10 +378,10 @@ class SdiEntrega2102ApplicationTests {
     @Order(21)
     // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
     // Comprobar con un listado que contenga varias invitaciones recibidas.
-    public void Prueba21() {
+    public void PR21() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
-        // Pinchamos en la opcion de solicitudes
+        // Pinchamos en la opción de solicitudes
         List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
         elements.get(0).click();
         List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
@@ -396,7 +396,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(27)
     // Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas las que existen para
     // dicho usuario
-    public void Prueba27() throws InterruptedException {
+    public void PR27() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
         // Pinchamos en la opcion de amigos
@@ -428,7 +428,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(28)
     // Utilizando un accesio vía URL u otra alternativa, tratar de listar las publicaciones de un usuario que no sea
     // amigo del usuario identificado en sesión. Comprobar que el sistema da un error de autorización.
-    public void Prueba28() {
+    public void PR28() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
         // Probamos a entrar mediante url a las publicaciones de un usuario que no es amigo del usuario identificado.
