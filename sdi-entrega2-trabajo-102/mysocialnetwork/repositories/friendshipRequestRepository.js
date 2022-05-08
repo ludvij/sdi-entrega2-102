@@ -8,6 +8,9 @@ module.exports = {
 	findFriendshipRequest: async (filter, options={}) => {
         return await FriendShipRequest.findOne(filter, options);
     }, 
+	findFriendshipRequests: async (filter, options={}) => {
+        return await FriendShipRequest.find(filter, options);
+    }, 
 	deleteFriendshipRequest: async (id) => {
         return await FriendShipRequest.findByIdAndDelete(id)
     },
