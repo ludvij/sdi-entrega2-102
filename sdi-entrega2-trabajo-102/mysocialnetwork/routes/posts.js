@@ -31,9 +31,9 @@ module.exports = function(app, usersRepository, postsRepository) {
 			if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
 				page = 1;
 			}
-			console.log(user)
+			// console.log(user)
 			let posts = await postsRepository.getPostsPg(filter, options, page)
-			console.log(posts)
+			// console.log(posts)
 			let lastPage = posts.total / 5;
 			if (posts.total % 5 > 0)
 				lastPage = lastPage + 1;

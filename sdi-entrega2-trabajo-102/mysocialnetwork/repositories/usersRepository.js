@@ -29,7 +29,6 @@ module.exports = {
 		return await User.find(filter, options)
 	},
 	findUser: async (filter, options={}) => {
-		console.log(this)
         return await User.findOne(filter, options);
     },
 	findUserById: async function(id, options={}) {
@@ -43,25 +42,12 @@ module.exports = {
 			await User.deleteMany({email: {$in: emails}});
 		}
     }, 
-	setFriendship: async (id, receiver, sender) => {
-        let index = receiver.requestReceived.indexOf(id);
-        receiver.requestReceived.splice(index, 1);
-        index = sender.requestSent.indexOf(id);
-        sender.requestSent.splice(index, 1);
+	setFriendship: async (receiver, sender) => {
 
         receiver.friends.push(sender._id);
         sender.friends.push(receiver._id);
 
     	await receiver.save();
-        await sender.save();
-    }, 
-	deleteRequests: async (id, receiver, sender) => {
-        let index = receiver.requestReceived.indexOf(id);
-        receiver.requestReceived.splice(index, 1);
-        index = sender.requestSent.indexOf(id);
-        sender.requestSent.splice(index, 1);
-
-        await receiver.save();
         await sender.save();
     },
 	getFriendsPg: async function (page, user) {

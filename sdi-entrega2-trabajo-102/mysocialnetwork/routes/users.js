@@ -169,11 +169,12 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         let user = await usersRepository.findUser({email: req.session.user.email})
 
 		let requests = [];
-		for (let i = 0; i < user.requestReceived.length; i++){
-			let request = await friendshipRequestRepository.findFriendshipRequest({_id: user.requestReceived[i].toString()});
-			let sender = await usersRepository.findUserById(request.sender);
-			requests.push({requestId: request._id, sender})
+		let req_rec = await friendshipRequestRepository.findFriendshipRequests({receiver: user._id})
+		for (let req of req_rec) {
+			let sender = await usersRepository.findUserById(req.sender)
+			requests.push({requestId: req._id, sender})
 		}
+	
 
 		//Paginación
 		let lastPage = requests.length / 5;
@@ -193,59 +194,50 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
     })
 
     app.get('/users/requests/list/accept/:id', async (req, res) => {
-        if (req.session.user != null) {
-           const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
+		const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
+		if (!request) 
+			return res.redirect('/users/requests/list');
 
-           const sender = await usersRepository.findUserById(request.sender);
-           const receiver = await usersRepository.findUserById(request.receiver);
+		const sender = await usersRepository.findUserById(request.sender);
+		const receiver = await usersRepository.findUserById(request.receiver);
 
-           if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
-               const request = await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
-               if (request.deletedCount > 0) {
-                   await usersRepository.setFriendship(req.params.id ,receiver, sender);
-                   res.redirect('/users/requests/list');
-               }
-           }
-        } else {
-            res.render("login.twig");
-        }
-    });
+		if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
+			await usersRepository.setFriendship(receiver, sender);
+			await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
+		}
+		res.redirect('/users/requests/list');
+	})
 
     app.get('/users/requests/list/decline/:id', async (req, res) => {
-        if (req.session.user != null) {
-            const request = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id});
+		let fr = await friendshipRequestRepository.findFriendshipRequest({_id: req.params.id})
+		if (!fr) 
+			return res.redirect('/users/requests/list');
+		// check the user declining is the user receiving the request
+		if (fr.receiver != req.session.user._id) {
+			return res.status(401).send('not your friendship request')
+		}
+		await friendshipRequestRepository.deleteFriendshipRequest(req.params.id)
+		res.redirect('/users/requests/list');
 
-            const sender = await usersRepository.findUserById(request.sender);
-            const receiver = await usersRepository.findUserById(request.receiver);
-
-            if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
-                const request = await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
-                if (request.deletedCount > 0) {
-                    await usersRepository.deleteRequests(req.params.id ,receiver, sender);
-                    res.redirect('/users/requests/list');
-                }
-            }
-        } else {
-            res.render("login.twig");
-        }
     });
   
   app.get('/users/list/send/:id', async (req, res) => {
         let senderUser = await usersRepository.findUser({email : req.session.user.email})
 		let receiverUser = await usersRepository.findUser({email : req.params.id})
+
+		// not friends
 		if(!senderUser.friends.includes(receiverUser)){
+			// check there are not requests arlready sent
 			let filter = {
-				$or : [{$and : [{receiver: senderUser},{sender: receiverUser}]},
-					{$and : [{sender: senderUser},{receiver: receiverUser}]}]
+				$or : [
+					{$and : [{receiver: senderUser},{sender: receiverUser}]},
+					{$and : [{sender: senderUser},{receiver: receiverUser}]}
+				]
 			};
 			let options = {};
 			let frienshipRequests = await friendshipRequestRepository.getFriendshipRequests(filter, options)
 			if(frienshipRequests.length == 0){
-				let friendship = await friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser)
-				senderUser.requestSent.push(friendship);
-				receiverUser.requestReceived.push(friendship);
-				senderUser.save();
-				receiverUser.save();
+				await friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser)
 			}
 		}
         res.redirect("/users/list");
