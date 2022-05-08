@@ -296,6 +296,35 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(15)
+    // Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema, excepto el
+    // propio usuario y aquellos que sean Administradores
+    public void PR15(){
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        //Contamos el número de filas de usuarios
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"pi-2\"]/a").get(0).click();
+
+        usersList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"pi-3\"]/a").get(0).click();
+
+        usersList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+
+        // Miramos cuántos usuarios hay en la base de datos
+        long totalUsers = doc.countDocuments();
+        // Y comprobamos que hemos obtenido los mismos, menos el propio usuario en sesión y el administrador
+        Assertions.assertEquals(totalUsers - 2, usersList.size());
+    }
+
+    @Test
     @Order(16)
     // buscar con campo vacío y mostrar todos los usuarios
     public void PR16() {
