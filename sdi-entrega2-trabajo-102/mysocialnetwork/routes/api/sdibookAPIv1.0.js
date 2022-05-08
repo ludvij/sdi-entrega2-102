@@ -49,6 +49,23 @@ module.exports = function (app, usersRepository, messageRepository) {
 			})
 		}
 	})
+  
+	app.post('/api/v1.0/conversation', [checkJWT(app)], async (req, res) => {
+		if (req.body.sender !== res.locals.jwtPayload.user._id && req.body.receiver !== res.locals.jwtPayload.user._id)
+			return res.status(403).json({
+				message: "No estás autorizado para acceder a esta conversación",
+			});
+
+		const filter = {
+			$or: [
+				{$and: [{sender: req.body.sender}, {receiver: req.body.receiver}]},
+				{$and: [{sender: req.body.receiver}, {receiver: req.body.sender}]}
+			]
+		}
+		const conversation = await messageRepository.findConversation(filter);
+
+		return res.status(200).send(conversation);
+  })
 
 	app.post('/api/v1.0/message', [checkJWT(app)], async (req, res) => {
 		try {

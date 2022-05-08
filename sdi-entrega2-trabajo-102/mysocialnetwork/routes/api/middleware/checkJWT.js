@@ -6,7 +6,7 @@ module.exports.checkJWT = (app) => {
 		const token = req.headers.token
 
 		try {
-			let JWTPayload = jwapp.get('jwt').verify(token, app.get('jwt_secret')) 
+			let JWTPayload = app.get('jwt').verify(token, app.get('jwt_secret'))
 			if(Date.now() >= JWTPayload.exp * 1000) {
 				return res.status(401)
 					// .header('WWW-Authenticate', 'Basic realm="session has ended, pelase log in again"')

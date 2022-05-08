@@ -57,7 +57,7 @@ UserSchema.pre('deleteOne', {document:true, query:true}, async (next) => {
 		await friend.save()
 		console.log('upadted: ' + friend)
 	}
-	
+
 	// delete requests sent
 	let reqs_send = await FriendShipRequest.deleteMany({sender: id})
 	// delete requests received
@@ -78,7 +78,7 @@ UserSchema.pre('deleteMany', {document:true, query:true}, async (next) => {
 			friend.friends.splice(idx, 1)
 			await friend.save()
 		}
-		
+
 		// delete posts
 		let posts = await Post.deleteMany({owner: id})
 		// delete requests sent
@@ -87,11 +87,11 @@ UserSchema.pre('deleteMany', {document:true, query:true}, async (next) => {
 		let reqs_rec = await FriendShipRequest.deleteMany({receiver: id})
 
 	}
-	next()	
+	next()
 
-})	
+})
 
 module.exports.User = User
 module.exports.Post = Post
 module.exports.FriendShipRequest = FriendShipRequest
-module.exports.Message = Message;
+module.exports.Message = Message
