@@ -5,8 +5,7 @@ module.exports = function (app, usersRepository, messageRepository) {
 	app.get('/api/v1.0/friends', [checkJWT(app)], (req, res) => {
 		res.send('authenticated')
 	})
-	// user beacuse you can't get users
-	app.post('/api/v1.0/user/login', async (req, res) => {
+	app.post('/api/v1.0/login', async (req, res) => {
 		try {
 			let securePassword = app.get('crypto').createHmac('sha256', app.get('clave'))
 				.update(req.body.password).digest('hex')
