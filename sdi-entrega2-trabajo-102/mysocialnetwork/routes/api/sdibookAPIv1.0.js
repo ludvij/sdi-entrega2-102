@@ -102,4 +102,24 @@ module.exports = function (app, usersRepository, messageRepository) {
 			res.json({error: "Se ha producido un error al intentar enviar el mensaje: " + e})
 		}
 	})
+
+	app.post('/api/v1.0/messages/read', [checkJWT(app)], async (req, res) => {
+		try {
+			let message = await messageRepository.findMessage({_id: req.body.id});
+			if (!message.sender.equals(res.locals.jwtPayload.user._id))
+				return res.status(403).json({
+					message: "No eres el emisor de este mensaje.",
+				});
+			message.read = true
+			await messageRepository.readMessage(message);
+			res.status(201);
+			res.json({
+				message: "Mensaje marcado como leído correctamente.",
+				_id: req.body.id
+			})
+		} catch (e) {
+			res.status(500);
+			res.json({error: "Se ha producido un error al marcar el mensaje como leído: " + e})
+		}
+	})
 }
