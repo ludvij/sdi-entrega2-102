@@ -28,10 +28,12 @@ app.set('jwt_secret', 'asjkl,.szdxjm,szdxm,')
 let usersRepository = require("./repositories/usersRepository.js");
 let friendshipRequestRepository = require("./repositories/friendshipRequestRepository.js");
 let postsRepository = require("./repositories/postsRepository");
+let messageRepository = require("./repositories/messageRepository");
 
 postsRepository.init(app);
 usersRepository.init(app);
 friendshipRequestRepository.init(app)
+messageRepository.init(app)
 
 const adminSessionRouter = require("./routes/adminSessionRouter");
 const userSessionRouter = require("./routes/userSessionRouter");
@@ -48,7 +50,7 @@ require("./routes/users.js")(app, usersRepository, friendshipRequestRepository);
 require("./routes/admin.js")(app, usersRepository);
 require("./routes/posts.js")(app, usersRepository, postsRepository);
 
-require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository)
+require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository, messageRepository)
 
 var indexRouter = require('./routes/index');
 app.use('/', indexRouter);
