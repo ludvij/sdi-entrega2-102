@@ -28,7 +28,7 @@ module.exports = function (app, usersRepository, messageRepository) {
 						user: user
 					}
 					let token = app.get('jwt').sign(payload, app.get('jwt_secret'),{expires_in: '1h'})
-
+					console.log(user)
 					return res.status(200).json({
 						message: 'Usuario autorizado',
 						authenticated: true,
@@ -38,7 +38,7 @@ module.exports = function (app, usersRepository, messageRepository) {
 				
 			} catch (err) {
 				return res.status(500).json({
-					message: "Se ha producido un error al verificar credenciales",
+					message: "Se ha producido un error al verificar credenciales " + err,
 					authenticated: false
 				})
 			}
@@ -49,7 +49,7 @@ module.exports = function (app, usersRepository, messageRepository) {
 			})
 		}
 	})
-
+  
 	app.post('/api/v1.0/conversation', [checkJWT(app)], async (req, res) => {
 		if (req.body.sender !== res.locals.jwtPayload.user._id && req.body.receiver !== res.locals.jwtPayload.user._id)
 			return res.status(403).json({
@@ -65,5 +65,41 @@ module.exports = function (app, usersRepository, messageRepository) {
 		const conversation = await messageRepository.findConversation(filter);
 
 		return res.status(200).send(conversation);
+  })
+
+	app.post('/api/v1.0/message', [checkJWT(app)], async (req, res) => {
+		try {
+			let message = {
+				sender: req.body.sender,
+				receiver: req.body.receiver,
+				text: req.body.text,
+				read: false
+			}
+			try{
+				let receiver = await usersRepository.findUser({_id: new ObjectId(message.receiver)});
+				let sender = await usersRepository.findUser({_id: new ObjectId(message.sender)});
+				if (receiver.friends.includes(sender._id) && sender.friends.includes(receiver._id)) {
+					try{
+						await messageRepository.createMessage(message);
+						return res.status(200).send({msg: "Se ha enviado el mensaje"});
+					}catch (error){
+						res.status(500);
+						res.json({error: "Se ha producido un error al intentar enviar el mensaje: " + error})
+					}
+
+				}else{
+					res.status(403);
+					res.json({error: "Para enviar mensajes es necesario ser amigos."})
+				}
+			}catch (error){
+				res.status(500);
+				res.json({error: "Se ha producido un error al intentar enviar el mensaje: " + error})
+			}
+
+
+		} catch (e) {
+			res.status(500);
+			res.json({error: "Se ha producido un error al intentar enviar el mensaje: " + e})
+		}
 	})
 }

@@ -41,6 +41,7 @@ const User = mongoose.model('User', UserSchema)
 const Post =  mongoose.model('Post', PostSchema)
 const FriendShipRequest = mongoose.model('FriendShipRequest', FriendShipRequestSchema)
 const Message = mongoose.model('Message', MessageSchema)
+
 // middlewares
 
 // TODO: checkthis works fine, may not work
@@ -89,9 +90,6 @@ UserSchema.pre('deleteMany', {document:true, query:true}, async (next) => {
 	next()
 
 })
-
-
-
 
 module.exports.User = User
 module.exports.Post = Post
