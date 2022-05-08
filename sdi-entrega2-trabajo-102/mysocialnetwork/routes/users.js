@@ -119,10 +119,13 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		}
 		// can't be null
 		let user = await usersRepository.findUser({email: req.session.user.email})
+
 		filter = {
 			$or: [
-				{_id : user.requestSent},
-				{_id : user.requestReceived}
+				{sender : user._id},
+				{receiver : user._id},
+				{sender: req.session.user._id},
+				{receiver: req.session.user._id}
 			]
 		}
 
@@ -264,7 +267,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					pages.push(i);
 				}
 			}
-			let response = {friends: result.users, pages: pages, currentPage: page}
+			let response = {friends: result.users, pages: pages, currentPage: page, user: req.session.user}
 			res.render("users/friends.twig", response);
 
 		} catch (error) {
