@@ -11,5 +11,11 @@ module.exports = {
     createMessage: async (body) => {
         let message = new Message(body);
         return await message.save();
+    },
+    findMessage: async (filter) => {
+      return await Message.findOne(filter);
+    },
+    readMessage: async (body) => {
+        await Message.updateOne({_id: body._id}, {read: true});
     }
 };
