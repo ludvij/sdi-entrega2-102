@@ -2,8 +2,17 @@ const {ObjectId} = require("mongodb");
 const {checkJWT} = require('./middleware/checkJWT')
 
 module.exports = function (app, usersRepository, messageRepository) {
-	app.get('/api/v1.0/friends', [checkJWT(app)], (req, res) => {
-		res.send('authenticated')
+	app.get('/api/v1.0/friends', [checkJWT(app)], async (req, res) => {
+		const {user} = res.locals.jwtPayload
+		let {friends} = await usersRepository.findAndPopulate({_id: user._id}, 'friends')
+		friends.sort((a, b) => {
+			return a.name.localeCompare(b.name, undefined, {
+				numeric: true,
+				sensitivity: 'base'
+			})
+		})
+		return res.send(friends)
+		
 	})
 	app.post('/api/v1.0/login', async (req, res) => {
 		try {
@@ -102,9 +111,9 @@ module.exports = function (app, usersRepository, messageRepository) {
 		}
 	})
 
-	app.post('/api/v1.0/messages/read', [checkJWT(app)], async (req, res) => {
+	app.get('/api/v1.0/message/:id', [checkJWT(app)], async (req, res) => {
 		try {
-			let message = await messageRepository.findMessage({_id: req.body.id});
+			let message = await messageRepository.findMessage({_id: req.params.id});
 			if (!message.sender.equals(res.locals.jwtPayload.user._id))
 				return res.status(403).json({
 					message: "No eres el emisor de este mensaje.",

@@ -4,9 +4,10 @@ module.exports = (app, usersRepository) => {
 		try {
 			let users = await usersRepository.findUsers({})
 			users.sort((a,b) => {
-				if (a.email < b.email) return -1
-				else if (a.email === b.email) return 0
-				else return 1
+				return a.email.localeCompare(b.email, undefined, {
+					numeric: true,
+					sensitivity: 'base'
+				})
 			})
 			res.render('admin/list.twig', {users: users, user: req.session.user});
 		} catch (error) {
