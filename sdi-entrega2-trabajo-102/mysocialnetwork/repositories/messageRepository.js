@@ -1,4 +1,4 @@
-const {Message, FriendShipRequest, User} = require('../schemas/schema')
+const {Message} = require('../schemas/schema')
 
 module.exports = {
     app: null,
@@ -6,12 +6,7 @@ module.exports = {
         this.app = app
     },
     createMessage: async (body) => {
-        let user = new Message({
-            sender: body.sender,
-            receiver: body.receiver,
-            text: body.text,
-            read: body.read
-        });
-        return await user.save();
+        let message = new Message(body);
+        return await message.save();
     }
 };

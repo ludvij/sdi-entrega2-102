@@ -45,3 +45,4 @@ const Message = mongoose.model('Message', MessageSchema)
 module.exports.User = User
 module.exports.Post = Post
 module.exports.FriendShipRequest = FriendShipRequest
+module.exports.Message = Message;
