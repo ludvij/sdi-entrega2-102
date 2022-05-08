@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi.pageobjects.*;
 import com.uniovi.sdi.util.SeleniumUtils;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.*;
@@ -18,7 +19,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //Ordenamos las pruebas por la anotación @Order de cada método
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -297,6 +300,35 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(15)
+    // Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema, excepto el
+    // propio usuario y aquellos que sean Administradores
+    public void PR15(){
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        //Contamos el número de filas de usuarios
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"pi-2\"]/a").get(0).click();
+
+        usersList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"pi-3\"]/a").get(0).click();
+
+        usersList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+
+        // Miramos cuántos usuarios hay en la base de datos
+        long totalUsers = doc.countDocuments();
+        // Y comprobamos que hemos obtenido los mismos, menos el propio usuario en sesión y el administrador
+        Assertions.assertEquals(totalUsers - 2, usersList.size());
+    }
+
+    @Test
     @Order(16)
     // buscar con campo vacío y mostrar todos los usuarios
     public void PR16() {
@@ -373,14 +405,95 @@ class SdiEntrega2102ApplicationTests {
         PO_NavView.logout(driver);
     }
 
+    @Test
+    @Order(19)
+    // Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario. Comprobar que la
+    // solicitud de amistad aparece en el listado de invitaciones.
+    public void PR19(){
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
+        // Obtenemos cada una de las filas
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+        // Cogemos el texto del primer usuario, por ejemplo
+        String[] texto = usersList.get(0).getText().split(" ");
+
+        // Enviamos la solicitud al primer usuario
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        elements.get(0).click();
+
+        // Para ver la solicitud nos tenemos que logear con el otro usuario
+        PO_HomeView.logout(driver);
+
+        // Iniciamos sesión con los datos que obtuvimos antes
+        PO_LoginView.loginAs(driver, texto[0], texto[1]);
+        // Vamos al menú de solicitudes
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a").get(0).click();
+        List<WebElement> solicitudes = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+
+        // Pulsamos el botón de rechazar la solicitud
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr/td[3]/div/a[2]");
+        elements.get(0).click();
+
+        // Debería haber una solicitud
+        Assertions.assertEquals(1, solicitudes.size());
+    }
+
+    @Test
+    @Order(20)
+    // Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario al que ya le
+    // habíamos enviado la invitación previamente. No debería dejarnos enviar la invitación o notificar que ya había
+    // sido enviada previamente.
+    public void PR20(){
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+
+        // Obtenemos cada una de las filas
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+        // Obtenemos el texto del primer usuario
+        String[] texto = usersList.get(0).getText().split(" ");
+
+        // Le enviamos la solicitud
+        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        sendList.get(0).click();
+
+        // Volvemos a darle al botón de enviar, el cual no debería de estar
+        List<WebElement> sendListAfter = driver.findElements(By.xpath("//*[@id=\"cuerpo\"]/tr[1]/td[4]/a"));
+        Assertions.assertEquals(sendList.size() - 1, sendListAfter.size());
+
+        // Hacemos como en la prueba anterior, denegar la solicitud para dejar las cosas como estaban
+        PO_HomeView.logout(driver);
+
+        PO_LoginView.loginAs(driver, texto[0], texto[1]);
+        PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a").get(0).click();
+        List<WebElement> solicitudes = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
+                , PO_View.getTimeout());
+
+        // Pulsamos el botón de rechazar la solicitud
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr/td[3]/div/a[2]");
+        elements.get(0).click();
+        Assertions.assertEquals(1, solicitudes.size());
+    }
 
     @Test
     @Order(21)
-    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado que contenga varios.
-    // Comprobar con un listado que contenga varias invitaciones recibidas.
+    // Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un listado
     public void PR21() {
+        PO_SignUpView.signUpAs(driver, "atest01@email.com", "atest01", "test", "atest");
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        // Le enviamos la solicitud
+        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        sendList.get(0).click();
+
+        PO_HomeView.logout(driver);
+        PO_LoginView.loginAs(driver, "user02@email.com", "user02");
+
+        sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        sendList.get(0).click();
+
+        PO_HomeView.logout(driver);
+        PO_LoginView.loginAs(driver, "atest01@email.com", "atest01");
 
         // Pinchamos en la opción de solicitudes
         List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
@@ -391,6 +504,42 @@ class SdiEntrega2102ApplicationTests {
         Assertions.assertEquals(2, requestList.size());
         PO_HomeView.logout(driver);
 
+    }
+
+    @Test
+    @Order(22)
+    // aceptar invitación y mostrar que desaparece
+    public void PR22() {
+        PO_SignUpView.signUpAs(driver, "atest01@email.com", "atest01", "test", "atest");
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        // Le enviamos la solicitud
+        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        sendList.get(0).click();
+
+        PO_HomeView.logout(driver);
+        PO_LoginView.loginAs(driver, "user02@email.com", "user02");
+
+        sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        sendList.get(0).click();
+
+        PO_HomeView.logout(driver);
+        PO_LoginView.loginAs(driver, "atest01@email.com", "atest01");
+
+        // Pinchamos en la opcion de solicitudes
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
+        elements.get(0).click();
+        List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        elements = PO_View.checkElementBy(driver, "free", "//a[contains(@id, 'acceptButton')]");
+        elements.get(0).click();
+
+        List<WebElement> requestListAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(requestList.size() - 1, requestListAfter.size());
+
+        PO_NavView.logout(driver);
     }
 
     @Test

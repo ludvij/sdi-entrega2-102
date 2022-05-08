@@ -30,8 +30,8 @@
                         <td scope="row">{{ request.sender.name }}</td>
                         <td scope="row">{{ request.sender.surname }}</td>
                         <td scope="row"><div>
-                            <a class="btn btn-success" href="/users/requests/list/accept/{{ request.requestId }}">Aceptar</a>
-                            <a class="btn btn-danger" href="/users/requests/list/decline/{{ request.requestId }}">Rechazar</a>
+                            <a class="btn btn-success" id="acceptButton" href="/users/requests/list/accept/{{ request.requestId }}">Aceptar</a>
+                            <a class="btn btn-danger" id="declineButton" href="/users/requests/list/decline/{{ request.requestId }}">Rechazar</a>
                         </div></td>
                     </tr>
                 {% endfor %}
