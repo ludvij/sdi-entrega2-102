@@ -1,7 +1,6 @@
 const {User} = require('../schemas/schema')
 
 module.exports = {
-    userModel: null,
     app: null,
     init: function (app) {
         this.app = app;
@@ -30,7 +29,6 @@ module.exports = {
 		return await User.find(filter, options)
 	},
 	findUser: async (filter, options={}) => {
-		console.log(this)
         return await User.findOne(filter, options);
     },
 	findUserById: async function(id, options={}) {
@@ -44,37 +42,20 @@ module.exports = {
 			await User.deleteMany({email: {$in: emails}});
 		}
     }, 
-	setFriendship: async (id, receiver, sender) => {
-        let index = receiver.requestReceived.indexOf(id);
-        receiver.requestReceived.splice(index, 1);
-        index = sender.requestSent.indexOf(id);
-        sender.requestSent.splice(index, 1);
+	setFriendship: async (receiver, sender) => {
 
         receiver.friends.push(sender._id);
         sender.friends.push(receiver._id);
 
     	await receiver.save();
         await sender.save();
-    }, 
-	deleteRequests: async (id, receiver, sender) => {
-        let index = receiver.requestReceived.indexOf(id);
-        receiver.requestReceived.splice(index, 1);
-        index = sender.requestSent.indexOf(id);
-        sender.requestSent.splice(index, 1);
+    },
+	getFriendsPg: async function (page, user) {
+		const limit = 5;
+		const friendsCollectionCount = user.friends.length;
+		let data =  await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit)
 
-        await receiver.save();
-        await sender.save();
-    },getFriendsPg: async function (page, user) {
-        try {
-            const limit = 5;
-            const friendsCollectionCount = user.friends.length;
-            let result;
-            await User.find({_id: {$in:user.friends}}).skip((page - 1) * limit).limit(limit).then((users) => {
-                result = {users: users, total: friendsCollectionCount};
-            });
-            return result;
-        } catch (error) {
-            throw (error);
-        }
+		return {users: data, total: friendsCollectionCount};
+       
     }
 };

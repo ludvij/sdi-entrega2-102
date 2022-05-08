@@ -1,6 +1,7 @@
 package com.uniovi.sdi.pageobjects;
 
 import com.uniovi.sdi.util.SeleniumUtils;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -29,5 +30,11 @@ public class PO_View {
 	 */
 	static public List<WebElement> checkElementBy(WebDriver driver, String criterio, String text) {
 		return  SeleniumUtils.waitLoadElementsBy(driver, criterio, text, getTimeout());
+	}
+
+	static public void checkError(WebDriver driver) {
+		String checkText = "No puedes ver las publicaciones de esa persona";
+		List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
+		Assertions.assertFalse(result.isEmpty());
 	}
 }
