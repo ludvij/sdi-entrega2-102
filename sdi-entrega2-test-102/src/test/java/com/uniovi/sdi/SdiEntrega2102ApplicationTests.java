@@ -588,5 +588,21 @@ class SdiEntrega2102ApplicationTests {
         // Comprobar que sale un error de autorización
         PO_View.checkError(driver);
     }
+    @Test
+    @Order(29)
+    public void PR29() {
+        driver.navigate().to(URL + "/users/login");
+        String text = "Identificación de usuario";
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
+        Assertions.assertEquals(text, result.get(0).getText());
+    }
 
+    @Test
+    @Order(30)
+    public void PR30() {
+        driver.navigate().to(URL + "/users/requests/list");
+        String text = "Identificación de usuario";
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
+        Assertions.assertEquals(text, result.get(0).getText());
+    }
 }
