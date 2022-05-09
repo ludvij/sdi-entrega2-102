@@ -543,6 +543,28 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(23)
+    // Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos que deben ser.
+    public void PR23() {
+        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        // Vamos a la opcion para mostrar el listado.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myfriends\"]/a");
+        elements.get(0).click();
+
+        //Check how many friends appear.
+        elements = PO_View.checkElementBy(driver, "free", "//table[@class='table table-hover']/tbody/tr");
+        int numberOfFriends = elements.size();
+
+        //Check the friends in the Database.
+        Document user01 = doc.find(eq("email", "user01@email.com")).first();
+        List<Object> friends = (List<Object>) user01.get("friends");
+        //Check that both are equal.
+        Assertions.assertEquals(numberOfFriends, friends.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
     @Order(27)
     // Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas las que existen para
     // dicho usuario
