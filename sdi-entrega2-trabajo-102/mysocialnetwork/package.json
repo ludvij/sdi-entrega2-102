@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www -e js,twig,json"
+    "start": "nodemon ./bin/www -e js,twig,json,html"
   },
   "dependencies": {
     "body-parser": "^1.20.0",

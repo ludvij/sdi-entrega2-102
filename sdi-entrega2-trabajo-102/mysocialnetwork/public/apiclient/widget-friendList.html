@@ -1,0 +1,62 @@
+<div id="widget-friendList">
+    <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
+    <button class="btn" onclick="loadFriends()" >Actualizar</button>
+
+    <table class="table table-hover" id="tableFriends">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+            </tr>
+        </thead>
+        <tbody id="friendListBody">
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+    window.history.pushState("","","/apiclient/client.html?w=friendList");
+    let friends;
+
+    $('#filter-by-name').on('input',function(e){
+        let filteredFriends = [];
+        let filterValue = $("#filter-by-name").val();
+        filteredFriends = friends.filter(f => f.name.includes(filterValue));
+        updateFriendList(filteredFriends);
+    });
+
+    function loadFriends() {
+        console.log("Calling " + URLbase + "/friends");
+        $.ajax({
+            url: URLbase + "/friends",
+            type: "GET",
+            data: {},
+            dataType: "json",
+            headers: {"token": token},
+            success: function (response) {
+                friends = response;
+                updateFriendList(friends);
+            },
+            error: function(error) {
+                $("#main-container").load("widget-login.html");
+            }
+        })
+    }
+
+    function updateFriendList(friends) {
+        $("#friendListBody").empty();
+        friends.forEach((f) => {
+            $("#friendListBody").append(
+                "<tr id=" + f._id + ">" +
+                "<td>" + f.email + "</td>" +
+                "<td>" + f.name + "</td>" +
+                "<td>" + f.surname + "</td>"
+            );
+        });
+    }
+
+    loadFriends();
+
+</script>
