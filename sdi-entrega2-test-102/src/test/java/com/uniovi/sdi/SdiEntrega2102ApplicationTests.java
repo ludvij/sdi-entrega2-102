@@ -627,4 +627,17 @@ class SdiEntrega2102ApplicationTests {
         List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
         Assertions.assertEquals(text, result.get(0).getText());
     }
+
+    @Test
+    @Order(31)
+    public void PR31() {
+        // crear usuario
+        PO_SignUpView.signUpAs(driver, "test@email.com", "test", "test", "test");
+        // iniciar sesión
+        PO_LoginView.loginAs(driver, "test@email.com", "test");
+        driver.navigate().to(URL + "/friends/3231231");
+        String text = "No puedes ver la lista de amigos de otro";
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
+        Assertions.assertEquals(text, result.get(0).getText());
+    }
 }
