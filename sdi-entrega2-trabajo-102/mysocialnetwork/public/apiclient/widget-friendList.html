@@ -5,9 +5,10 @@
     <table class="table table-hover" id="tableFriends">
         <thead>
             <tr>
-                <th>Email</th>
+                <th width="50%">Email</th>
                 <th>Nombre</th>
                 <th>Apellidos</th>
+                <th>Mensajes no leídos</th>
             </tr>
         </thead>
         <tbody id="friendListBody">
@@ -74,14 +75,16 @@
                 "<tr id=" + f._id + ">" +
                 "<td>" + f.email + " <br><a onclick=goConversation('" + f._id + "')>" + messages[0].createdAt.split("T") + " " + messages[0].text + "</a></td>" +
                 "<td>" + f.name + "</td>" +
-                "<td>" + f.surname + "</td>"
+                "<td>" + f.surname + "</td>" +
+                "<td>" + checkNonReadMessages(messages, f) +"</td>"
             );
         }else{
             $("#friendListBody").append(
                 "<tr id=" + f._id + ">" +
                 "<td>" + f.email + "</td>" +
                 "<td>" + f.name + "</td>" +
-                "<td>" + f.surname + "</td>"
+                "<td>" + f.surname + "</td>" +
+                "<td></td>"
             );
         }
     }
@@ -90,6 +93,20 @@
         friendId = id;
         $("#main-container").load("widget-chat.html");
     }
+
+    function checkNonReadMessages(messages, f) {
+        let numberOfMessages = 0;
+        messages.forEach(message => {
+            if (f._id == message.sender && !message.read) {
+                numberOfMessages++;
+            }
+        });
+        return numberOfMessages;
+    }
+
+    setInterval(function() {
+        loadFriends();
+    }, 1000);
 
     loadFriends();
 
