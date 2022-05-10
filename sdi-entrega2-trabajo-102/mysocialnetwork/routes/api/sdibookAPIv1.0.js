@@ -70,10 +70,10 @@ module.exports = function (app, usersRepository, messageRepository) {
 		return res.status(200).send(conversation);
   })
 
-	app.post('/api/v1.0/message', async (req, res) => {
+	app.post('/api/v1.0/message', [checkJWT(app)], async (req, res) => {
 		try {
 			let message = {
-				sender: req.body.sender,
+				sender: res.locals.jwtPayload.user._id,
 				receiver: req.body.receiver,
 				text: req.body.text,
 				read: false
