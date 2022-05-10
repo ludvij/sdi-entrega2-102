@@ -30,6 +30,9 @@ class SdiEntrega2102ApplicationTests {
     static String Geckodriver = "geckodriver.exe";
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
+    //static String Geckodriver = "geckodriver";
+    //static String PathFirefox = "/usr/bin/firefox";
+
     static final String URL = "http://localhost:3000";
     static final String URL_jQuery = "http://localhost:3000/apiclient/client.html?w=login";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
@@ -69,6 +72,7 @@ class SdiEntrega2102ApplicationTests {
         //Cerramos el navegador al finalizar las pruebas
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
+        postDocument.deleteMany(eq("title", "test_titulo"));
         client.close();
         driver.quit();
     }
@@ -80,6 +84,7 @@ class SdiEntrega2102ApplicationTests {
         // cleanup
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
+        doc.deleteMany(eq("title", "test_titulo"));
     }
 
     //Después de cada prueba se borran las cookies del navegador
@@ -561,6 +566,32 @@ class SdiEntrega2102ApplicationTests {
         List<Object> friends = (List<Object>) user07.get("friends");
         //Check that both are equal.
         Assertions.assertEquals(numberOfFriends, friends.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(24)
+    // Rellenar el formulario de post con datos válidos y comprobar que se crea el post.
+    public void PR24() {
+        PO_LoginView.loginAs(driver, "user07@email.com", "user07");
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
+        elements.get(0).click();
+
+        PO_PostAddView.addPost(driver, "test_titulo", "test_cuerpo");
+
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
+        elements.get(0).click();
+
+        elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo",PO_View.getTimeout());
+        elements.get(0).click();
 
         PO_NavView.logout(driver);
     }
