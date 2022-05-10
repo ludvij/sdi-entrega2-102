@@ -682,4 +682,27 @@ class SdiEntrega2102ApplicationTests {
 
         driver.navigate().to(URL);
     }
+
+    @Test
+    @Order(36)
+    // Acceder a la lista de mensajes de un amigo, la lista debe contener al menos tres mensajes.
+    public void PR36(){
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messages = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Nos aseguramos que hay al menos 3 mensajes
+        Assertions.assertTrue(messages.size() >= 3);
+
+    }
+
+
 }
