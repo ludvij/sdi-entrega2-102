@@ -31,6 +31,7 @@ class SdiEntrega2102ApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     static final String URL = "http://localhost:3000";
+    static final String URL_jQuery = "http://localhost:3000/apiclient/client.html?w=login";
     static WebDriver driver = getDriver(PathFirefox, Geckodriver);
 
     private static MongoClient client;
@@ -546,7 +547,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(23)
     // Mostrar el listado de amigos de un usuario. Comprobar que el listado contiene los amigos que deben ser.
     public void PR23() {
-        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        PO_LoginView.loginAs(driver, "user07@email.com", "user07");
         // Vamos a la opcion para mostrar el listado.
         List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myfriends\"]/a");
         elements.get(0).click();
@@ -556,8 +557,8 @@ class SdiEntrega2102ApplicationTests {
         int numberOfFriends = elements.size();
 
         //Check the friends in the Database.
-        Document user01 = doc.find(eq("email", "user01@email.com")).first();
-        List<Object> friends = (List<Object>) user01.get("friends");
+        Document user07 = doc.find(eq("email", "user07@email.com")).first();
+        List<Object> friends = (List<Object>) user07.get("friends");
         //Check that both are equal.
         Assertions.assertEquals(numberOfFriends, friends.size());
 
@@ -626,5 +627,46 @@ class SdiEntrega2102ApplicationTests {
         String text = "Identificación de usuario";
         List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
         Assertions.assertEquals(text, result.get(0).getText());
+    }
+
+    @Test
+    @Order(32)
+    //Inicio de sesión con datos válidos.
+    public void PR32() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        driver.navigate().to(URL);
+    }
+
+    @Test
+    @Order(33)
+    //Inicio de sesión con datos inválidos (usuario no existente en la aplicación).
+    public void PR33() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginErrorAsApi(driver, "user99@email.com", "user99");
+
+        driver.navigate().to(URL);
+    }
+
+    @Test
+    @Order(34)
+    //Acceder a la lista de amigos de un usuario, que al menos tenga tres amigos.
+    public void PR34() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user07@email.com", "user07");
+
+        //Check how many friends appear
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//table[@class='table table-hover']/tbody/tr");
+        int numberOfFriends = elements.size();
+
+        //Check the friends in the Database.
+        Document user07 = doc.find(eq("email", "user07@email.com")).first();
+        List<Object> friends = (List<Object>) user07.get("friends");
+
+        //Check that both are equal.
+        Assertions.assertEquals(numberOfFriends, friends.size());
+
+        driver.navigate().to(URL);
     }
 }
