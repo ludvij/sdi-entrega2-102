@@ -29,6 +29,26 @@
 <script>
     window.history.pushState("","","/apiclient/client.html?w=chat");
 
+    $("#boton-enviar").click(() => {
+        $.ajax({
+            url: URLbase + "/message",
+            type: "POST",
+            data: {
+                receiver: friendId,
+                text: $("#texto").val()
+            },
+            dataType: "json",
+            headers: {"token": token},
+            success: (response) => {
+                $("#texto").val('');
+                loadConversation();
+            },
+            error: (error) => {
+                $("#main-container").load("widget-login.html");
+            }
+        })
+    })
+
     function loadConversation() {
         console.log("Calling " + URLbase + "/conversation/" + friendId);
         $.ajax({
@@ -61,7 +81,6 @@
     setInterval(function() {
         loadConversation();
     }, 1000);
-
 
     loadConversation();
 
