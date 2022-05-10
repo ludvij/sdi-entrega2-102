@@ -29,4 +29,16 @@ public class PO_PostAddView extends PO_NavView {
         Assertions.assertEquals(text, result.get(0).getText());
     }
 
+    public static void addPostEmpty(WebDriver driver, String title, String body) {
+        fillForm(driver, title, body);
+        //Comprobamos que seguimos en la página de registro.
+        //String text = "Ambas contraseñas deben de ser iguales.";
+
+        Assertions.assertTrue(driver.getCurrentUrl().contains("/posts/add"));
+
+        //no deja mandarlo, los campos son required
+        //List<WebElement> result = checkElementBy(driver, "text", text);
+        //Assertions.assertEquals(text, result.get(0).getText());
+    }
+
 }

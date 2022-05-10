@@ -27,11 +27,11 @@ import java.util.Map;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SdiEntrega2102ApplicationTests {
 
-    static String Geckodriver = "geckodriver.exe";
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "geckodriver.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
-    //static String Geckodriver = "geckodriver";
-    //static String PathFirefox = "/usr/bin/firefox";
+    static String Geckodriver = "geckodriver";
+    static String PathFirefox = "/usr/bin/firefox";
 
     static final String URL = "http://localhost:3000";
     static final String URL_jQuery = "http://localhost:3000/apiclient/client.html?w=login";
@@ -592,6 +592,24 @@ class SdiEntrega2102ApplicationTests {
 
         elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo",PO_View.getTimeout());
         elements.get(0).click();
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(25)
+    // Rellenar el formulario de post con datos válidos y comprobar que se crea el post.
+    public void PR25() {
+        PO_LoginView.loginAs(driver, "user07@email.com", "user07");
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
+        elements.get(0).click();
+
+        //metemos un campo vacio. este método ya comprueba que no nos movemos de página.
+        PO_PostAddView.addPostEmpty(driver, "test_titulo", "");
 
         PO_NavView.logout(driver);
     }
