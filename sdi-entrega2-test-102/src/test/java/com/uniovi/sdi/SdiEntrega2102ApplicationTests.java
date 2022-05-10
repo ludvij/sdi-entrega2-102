@@ -39,6 +39,7 @@ class SdiEntrega2102ApplicationTests {
     private static MongoCollection<Document> doc;
     private static MongoCollection<Document> friendshiprequesets;
     private static MongoCollection<Document> postDocument;
+    private static MongoCollection<Document> messageDocument;
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -57,6 +58,7 @@ class SdiEntrega2102ApplicationTests {
             doc = database.getCollection("users");
             friendshiprequesets = database.getCollection("friendshiprequests");
             postDocument = database.getCollection("posts");
+            messageDocument = database.getCollection("messages");
         } catch (MongoException me) {
             throw me;
         }
@@ -80,6 +82,8 @@ class SdiEntrega2102ApplicationTests {
         // cleanup
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
+        Bson messages = eq("text", "Nuevo mensaje");
+        messageDocument.deleteMany(messages);
     }
 
     //Después de cada prueba se borran las cookies del navegador
@@ -701,6 +705,39 @@ class SdiEntrega2102ApplicationTests {
 
         // Nos aseguramos que hay al menos 3 mensajes
         Assertions.assertTrue(messages.size() >= 3);
+    }
+
+    @Test
+    @Order(37)
+    // Enviar un mensaje y conprobar que aparece en la lista
+    public void PR37() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messagesBefore = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Escribimos un mensaje
+        WebElement message = driver.findElement(By.name("texto"));
+        message.click();
+        message.clear();
+        message.sendKeys("Nuevo mensaje");
+
+        // Enviamos el mensaje
+        element = PO_View.checkElementBy(driver, "free", "//*[@id=\"boton-enviar\"]");
+        element.get(0).click();
+
+        // Vemos cuantas filas hay después de mandar un mensaje
+        List<WebElement> messagesAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(messagesBefore.size() + 1, messagesAfter.size());
     }
 
     @Test
