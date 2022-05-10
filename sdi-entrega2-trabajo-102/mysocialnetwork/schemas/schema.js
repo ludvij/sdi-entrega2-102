@@ -35,7 +35,8 @@ const MessageSchema = new Schema({
 	receiver: {type: Schema.Types.ObjectId, ref: 'User', required: true},
 	text: {type: String, required: true},
 	read: {type: Boolean, default: false}
-})
+},
+	{timestamps: true})
 
 const User = mongoose.model('User', UserSchema)
 const Post =  mongoose.model('Post', PostSchema)

@@ -19,7 +19,9 @@
 <script>
     window.history.pushState("","","/apiclient/client.html?w=friendList");
     let friends;
-
+    var friendId;
+    var friendName;
+    var messages;
     $('#filter-by-name').on('input',function(e){
         let filteredFriends = [];
         let filterValue = $("#filter-by-name").val();
@@ -48,13 +50,45 @@
     function updateFriendList(friends) {
         $("#friendListBody").empty();
         friends.forEach((f) => {
+            $.ajax({
+                url: URLbase + "/conversation/" + f._id,
+                type: "GET",
+                data: {},
+                dataType: "json",
+                headers: {"token": token},
+                success: function (response) {
+                    messages = response;
+                    setFriendList(messages, f)
+                },
+                error: function(error) {
+                    $("#main-container").load("widget-login.html");
+                }
+            })
+
+        });
+    }
+
+    function setFriendList(messages, f){
+        if(messages.length >= 2) {
+            $("#friendListBody").append(
+                "<tr id=" + f._id + ">" +
+                "<td>" + f.email + " <br><a onclick=goConversation('" + f._id + "')>" + messages[0].createdAt.split("T") + " " + messages[0].text + "</a></td>" +
+                "<td>" + f.name + "</td>" +
+                "<td>" + f.surname + "</td>"
+            );
+        }else{
             $("#friendListBody").append(
                 "<tr id=" + f._id + ">" +
                 "<td>" + f.email + "</td>" +
                 "<td>" + f.name + "</td>" +
                 "<td>" + f.surname + "</td>"
             );
-        });
+        }
+    }
+
+    function goConversation(id){
+        friendId = id;
+        $("#main-container").load("widget-chat.html");
     }
 
     loadFriends();
