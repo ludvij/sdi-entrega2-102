@@ -109,9 +109,9 @@ module.exports = function (app, usersRepository, messageRepository) {
 	app.get('/api/v1.0/message/:id', [checkJWT(app)], async (req, res) => {
 		try {
 			let message = await messageRepository.findMessage({_id: req.params.id});
-			if (!message.sender.equals(res.locals.jwtPayload.user._id))
+			if (!message.receiver.equals(new ObjectId(res.locals.jwtPayload.user._id)))
 				return res.status(403).json({
-					message: "No eres el emisor de este mensaje.",
+					message: "No eres el receptor de este mensaje.",
 				});
 			message.read = true
 			await messageRepository.readMessage(message);

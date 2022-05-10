@@ -4,7 +4,7 @@
         <thead>
         <tr>
             <th>Contenido</th>
-            <th>Leído</th>
+            <th></th>
         </tr>
         </thead>
         <tbody id="messageListBody">
@@ -59,6 +59,7 @@
             headers: {"token": token},
             success: function (response) {
                 messages = response;
+                readMessages(messages);
                 updateMessageList(messages);
             },
             error: function(error) {
@@ -67,14 +68,42 @@
         })
     }
 
+    function readMessages(messages) {
+        messages.forEach((m) => {
+            if(!m.read){
+                $.ajax({
+                    url: URLbase + "/message/" + m._id,
+                    type: "GET",
+                    data: {},
+                    dataType: "json",
+                    headers: {"token": token},
+                    success: function (response) {
+                        console.log("Mensaje marcado como leído");
+                    },
+                    error: function(error) {
+                        console.log("No se ha podido marcar el mensaje como leído")
+                    }
+                })
+            }
+        })
+    }
+
     function updateMessageList(messages) {
         $("#messageListBody").empty();
         messages.forEach((m) => {
-            $("#messageListBody").append(
-                "<tr id=" + m._id + ">" +
-                "<td>" + m.text + "</td>" +
-                "<td>" + m.read + "</td>"
-            );
+            if(m.read){
+                $("#messageListBody").append(
+                    "<tr id=" + m._id + ">" +
+                    "<td>" + m.text + "</td>" +
+                    "<td>Leído</td>"
+                );
+            }else{
+                $("#messageListBody").append(
+                    "<tr id=" + m._id + ">" +
+                    "<td>" + m.text + "</td>"
+                );
+            }
+
         });
     }
 
