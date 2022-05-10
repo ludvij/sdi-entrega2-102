@@ -682,4 +682,82 @@ class SdiEntrega2102ApplicationTests {
 
         driver.navigate().to(URL);
     }
+
+    @Test
+    @Order(36)
+    // Acceder a la lista de mensajes de un amigo, la lista debe contener al menos tres mensajes.
+    public void PR36(){
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messages = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Nos aseguramos que hay al menos 3 mensajes
+        Assertions.assertTrue(messages.size() >= 3);
+    }
+
+    @Test
+    @Order(38)
+    // Identificarse en la aplicación y enviar un mensaje a un amigo. Validar que el mensaje enviado aparece en el
+    // chat. Identificarse después con el usuario que recibió el mensaje y validar que tiene un mensaje sin leer.
+    // Entrar en el chat y comprobar que el mensaje pasa a tener el estado leído.
+    public void PR38() throws InterruptedException {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messagesBefore = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        WebElement message = driver.findElement(By.name("texto"));
+        message.click();
+        message.clear();
+        message.sendKeys("Nuevo mensaje");
+
+        By boton = By.id("boton-enviar");
+        driver.findElement(boton).click();
+
+        // Vemos cuantas filas hay después
+        List<WebElement> messagesAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Nos aseguramos que aparece el mensaje nuevo
+        Assertions.assertEquals(messagesBefore.size(), messagesAfter.size() - 1);
+
+        // Nos logueamos con el usuario al que le envíamos el mensaje
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user02@email.com", "user02");
+
+        // Obtenemos el número de mensajes sin leer
+        String messagesNonRead = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"6276375b2af1c3c02e64f551\"]/td[4]",
+                PO_View.getTimeout()).get(0).getText();
+        // Debería ser uno
+        Assertions.assertEquals(messagesNonRead, "1");
+
+        // Nos vamos a la conversación
+        SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"6276375b2af1c3c02e64f551\"]/td[1]/a",
+                PO_View.getTimeout()).get(0).click();
+
+        // Obtenemos la lista de mensajes
+        List<WebElement> messages = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Obtenemos el último mensaje y comprobamos que esté leído
+        List<WebElement>  lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[2]", PO_View.getTimeout());
+        Assertions.assertEquals(lastMessage.get(0).getText(), "Leído");
+    }
+
+
 }
