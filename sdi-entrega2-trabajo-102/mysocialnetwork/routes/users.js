@@ -245,19 +245,21 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		}
         res.redirect("/users/list");
     });
-    app.get('/friends', async (req, res) => {
+    app.get('/friends/:id', async (req, res) => {
+		if (req.params.id !== req.session.user._id) {
+			return res.status(403).send('No puedes ver la lista de amigos de otro')
+		}
         let filter = {
             role: "ROLE_USER",
-            email: req.session.user.email
+            _id: req.params.id
         }
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
             page = 1;
         }
-        let user = await usersRepository.findUser(filter);
 
 		try {
-			let result = await usersRepository.getFriendsPg(page, user)
+			let result = await usersRepository.getFriendsPg(page, filter, 'friends')
 			let lastPage = result.total / 5;
 			if (result.total % 5 > 0)
 				lastPage = lastPage + 1;
@@ -271,7 +273,6 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			res.render("users/friends.twig", response);
 
 		} catch (error) {
-
 			res.send("Se ha producido un error al listar a los amigos " + error)
 		}
     })

@@ -53,10 +53,13 @@ module.exports = {
     	await receiver.save();
         await sender.save();
     },
-	getFriendsPg: async (page, user) => {
+	getFriendsPg: async (page, filter, options={}) => {
 		const limit = 5;
-		const friendsCollectionCount = user.friends.length;
-		let {friends} = await User.findById(user._id).populate('friends').skip((page - 1) * limit).limit(limit)
+		let num = (page - 1) * limit
+		let {friends} = await User.findOne(filter, options).populate('friends')
+		const friendsCollectionCount = friends.length;
+		// skip and limit
+		friends = friends.slice(num, num + limit)
 
 		return {users: friends, total: friendsCollectionCount};
        
