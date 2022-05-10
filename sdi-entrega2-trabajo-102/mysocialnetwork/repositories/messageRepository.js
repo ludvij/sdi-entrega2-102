@@ -6,7 +6,7 @@ module.exports = {
         this.app = app
     },
     findConversation: async (filter) => {
-        return await Message.find(filter)
+        return await Message.find(filter).sort({createdAt: -1})
     },
     createMessage: async (body) => {
         let message = new Message(body);
