@@ -26,6 +26,7 @@
             dataType:"json",
             success:function success(response){
                 token = response.token;
+                Cookies.set('token', response.token);
                 $("#main-container").load("widget-friendList.html");
             },
             error: function (error){

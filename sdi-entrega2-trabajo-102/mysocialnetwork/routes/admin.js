@@ -1,6 +1,6 @@
 const logger = require('../logger')
 
-module.exports = (app, usersRepository) => {
+module.exports = (app, usersRepository, postRepository, friendshipRequestRepository) => {
 
     app.get('/admin/list', async (req, res) => {
 		try {
@@ -19,7 +19,12 @@ module.exports = (app, usersRepository) => {
 	});
 
     app.post('/admin/delete/', async (req, res) => {
-        await usersRepository.deleteUser(req.body.users);
+		let emails = []
+		if (typeof req.body.users == 'string') {
+			usersRepository.deleteUser(req.body.users)
+		} else{
+			usersRepository.deleteUsers(req.body.users)
+		}
         res.redirect("/admin/list");
     })
 }

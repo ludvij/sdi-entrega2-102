@@ -23,5 +23,11 @@ module.exports = {
             receiver: receiver
         });
         return await friendshipReq.save(callback);
+    },
+    deleteManySenders: async (id) => {
+        await FriendShipRequest.deleteMany({sender: id})
+    },
+    deleteManyReceiver: async (id) => {
+        await FriendShipRequest.deleteMany({receiver: id})
     }
 };

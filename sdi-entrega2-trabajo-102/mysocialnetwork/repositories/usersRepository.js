@@ -1,4 +1,4 @@
-const {User} = require('../schemas/schema')
+const {User, Post, FriendShipRequest} = require('../schemas/schema')
 
 module.exports = {
     app: null,
@@ -37,12 +37,45 @@ module.exports = {
 	findUserById: async function(id, options={}) {
         return await User.findById(id, options);
     },
-	deleteUser: async (emails) => {
-		if (typeof emails == 'string') {
-			await User.deleteOne({email: emails});
-		} else if(emails != undefined) {
-			// usage of mongoose thing
-			await User.deleteMany({email: {$in: emails}});
+	deleteUser: async (email) => {
+		let user = await User.find({email: email})
+		// delete posts
+		await Post.deleteMany({_id: {$in: user.posts}})
+		// delete requests
+		await FriendShipRequest.deleteMany({$or: [
+				{sender: user._id}, 
+				{receiver: user._id}
+			]}
+		)
+		// remove from friends
+		let friends = await User.find({_id: {$in: user.friends}})
+		for(let friend of friends) {
+			let idx = friend.friends.indexOf(user._id)
+			friend.friends.splice(idx, 1)
+			await friend.save()
+		}
+		await User.deleteOne({_id: user._id})
+    }, 
+	deleteUsers: async (emails) => {
+		for (let email of emails) {
+
+			let user = await User.find({email: email})
+			// delete posts
+			await Post.deleteMany({_id: {$in: user.posts}})
+			// delete requests
+			await FriendShipRequest.deleteMany({$or: [
+				{sender: user._id}, 
+				{receiver: user._id}
+			]}
+			)
+			// remove from friends
+			let friends = await User.find({_id: {$in: user.friends}})
+			for(let friend of friends) {
+				let idx = friend.friends.indexOf(user._id)
+				friend.friends.splice(idx, 1)
+				await friend.save()
+			}
+			await User.deleteOne({_id: user._id})
 		}
     }, 
 	setFriendship: async (receiver, sender) => {
