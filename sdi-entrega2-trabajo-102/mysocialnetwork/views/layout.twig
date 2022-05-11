@@ -28,12 +28,12 @@
                 <li id="users/list"><a href="/users/list">Usuarios</a></li>
                 <li id="myfriends"><a href="/friends/{{user._id}}">Amigos</a></li>
                 <li id="myrequests"><a href="/users/requests/list">Solicitudes</a></li>
-                <li id="posts-menu" class="nav-item dropdown">
+                <li id="myposts" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="postDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Posts</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/posts/add">Crear post</a>
-                        <a class="dropdown-item" href="/posts/listOwn">Mis posts</a>
+                        <a class="dropdown-item" id="myposts_crear" href="/posts/add">Crear post</a>
+                        <a class="dropdown-item" id="myposts_list" href="/posts/listOwn">Mis posts</a>
                     </div>
                 </li>
                 {% endif %}

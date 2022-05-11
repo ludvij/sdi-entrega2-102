@@ -12,6 +12,7 @@ import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -19,6 +20,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,11 @@ import java.util.Map;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SdiEntrega2102ApplicationTests {
 
-    static String Geckodriver = "geckodriver.exe";
-    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    //static String Geckodriver = "geckodriver.exe";
+    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+
+    static String Geckodriver = "geckodriver";
+    static String PathFirefox = "/usr/bin/firefox";
 
     static final String URL = "http://localhost:3000";
     static final String URL_jQuery = "http://localhost:3000/apiclient/client.html?w=login";
@@ -39,6 +44,12 @@ class SdiEntrega2102ApplicationTests {
     private static MongoCollection<Document> doc;
     private static MongoCollection<Document> friendshiprequesets;
     private static MongoCollection<Document> postDocument;
+    private static MongoCollection<Document> messageDocument;
+
+    //credenciales para el usuario que postea. tests 24 a 26.
+    private static String[] posterUserCredentials = new String[]{"user07@email.com", "user07"};
+    private static List<ObjectId> newPostIds = new ArrayList<>();
+
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -57,6 +68,7 @@ class SdiEntrega2102ApplicationTests {
             doc = database.getCollection("users");
             friendshiprequesets = database.getCollection("friendshiprequests");
             postDocument = database.getCollection("posts");
+            messageDocument = database.getCollection("messages");
         } catch (MongoException me) {
             throw me;
         }
@@ -69,6 +81,12 @@ class SdiEntrega2102ApplicationTests {
         //Cerramos el navegador al finalizar las pruebas
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
+
+        for (ObjectId postId : newPostIds) {
+            postDocument.deleteMany(eq("_id", postId));
+            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+        }
+
         client.close();
         driver.quit();
     }
@@ -80,6 +98,14 @@ class SdiEntrega2102ApplicationTests {
         // cleanup
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
+
+        for (ObjectId postId : newPostIds) {
+            postDocument.deleteMany(eq("_id", postId));
+            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+        }
+
+        Bson messages = eq("text", "Nuevo mensaje");
+        messageDocument.deleteMany(messages);
     }
 
     //Después de cada prueba se borran las cookies del navegador
@@ -566,6 +592,81 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(24)
+    // Rellenar el formulario de post con datos válidos y comprobar que se crea el post.
+    public void PR24() {
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
+        List<ObjectId> postIds = (List<ObjectId>) doc.find(eq("email", posterUserCredentials[0])).first().get("posts");
+        List<ObjectId> postIdsAfter;
+
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
+        elements.get(0).click();
+
+        PO_PostAddView.addPost(driver, "test_titulo", "test_cuerpo");
+
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
+        elements.get(0).click();
+
+        elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo",PO_View.getTimeout());
+        elements.get(0).click();
+
+        postIdsAfter = (List<ObjectId>) doc.find(eq("email", posterUserCredentials[0])).first().get("posts");
+        for (ObjectId eachId : postIdsAfter) {
+            if (!postIds.contains(eachId)) {
+                newPostIds.add(eachId);
+            }
+        }
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(25)
+    // Rellenar el formulario de post con datos inválidos y comprobar que no se crea el post.
+    public void PR25() {
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de crear un nuevo post
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
+        elements.get(0).click();
+
+        //metemos un campo vacio. este método ya comprueba que no nos movemos de página.
+        PO_PostAddView.addPostEmpty(driver, "test_titulo", "");
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(26)
+    // Listar posts. Es necesario que el usuario 07 tenga algún post propio antes de los test.
+    public void PR26() {
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de listar posts
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
+        elements.get(0).click();
+
+        Document self = doc.find(eq("email", posterUserCredentials[0])).first();
+        //solo tenemos uno
+        List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        List<Object> userPosts = (List<Object>) self.get("posts");
+        Assertions.assertEquals(userPosts.size(), posts.size());
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
     @Order(27)
     // Mostrar el listado de publicaciones de un usuario amigo y comprobar que se muestran todas las que existen para
     // dicho usuario
@@ -704,6 +805,39 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(37)
+    // Enviar un mensaje y conprobar que aparece en la lista
+    public void PR37() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messagesBefore = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Escribimos un mensaje
+        WebElement message = driver.findElement(By.name("texto"));
+        message.click();
+        message.clear();
+        message.sendKeys("Nuevo mensaje");
+
+        // Enviamos el mensaje
+        element = PO_View.checkElementBy(driver, "free", "//*[@id=\"boton-enviar\"]");
+        element.get(0).click();
+
+        // Vemos cuantas filas hay después de mandar un mensaje
+        List<WebElement> messagesAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(messagesBefore.size() + 1, messagesAfter.size());
+    }
+
+    @Test
     @Order(38)
     // Identificarse en la aplicación y enviar un mensaje a un amigo. Validar que el mensaje enviado aparece en el
     // chat. Identificarse después con el usuario que recibió el mensaje y validar que tiene un mensaje sin leer.
@@ -757,6 +891,49 @@ class SdiEntrega2102ApplicationTests {
         // Obtenemos el último mensaje y comprobamos que esté leído
         List<WebElement>  lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[2]", PO_View.getTimeout());
         Assertions.assertEquals(lastMessage.get(0).getText(), "Leído");
+    }
+  
+  @Test
+  @Order(39)
+    // Validar que salen los mensajes en el chat, entrar con otro usuario y ver que el número de mensajes sin leer aparece
+    public void PR39() {
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Pinchamos en el enlace de uno de los amigos para que nos lleve a su conversación
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"627637722af1c3c02e64f553\"]/td[1]/a",
+                PO_View.getTimeout());
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los mensajes
+        List<WebElement> messagesBefore = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        // Enviamos tres mensajes
+        WebElement message = driver.findElement(By.name("texto"));
+        element = PO_View.checkElementBy(driver, "free", "//*[@id=\"boton-enviar\"]");
+        for (int i = 0; i < 3; i++) {
+            message.click();
+            message.clear();
+            message.sendKeys("Nuevo mensaje");
+            element.get(0).click();
+        }
+
+        // Vemos cuantas filas hay después de mandar los mensajes
+        List<WebElement> messagesAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(messagesBefore.size() + 3, messagesAfter.size());
+
+        // Nos logueamos con el usuario al que le envíamos el mensaje
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user02@email.com", "user02");
+
+        // Obtenemos el número de mensajes sin leer
+        String messagesNonRead = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"6276375b2af1c3c02e64f551\"]/td[4]",
+                PO_View.getTimeout()).get(0).getText();
+
+        Assertions.assertEquals(messagesNonRead, "3");
     }
 
     @Test
@@ -830,6 +1007,5 @@ class SdiEntrega2102ApplicationTests {
 
         Assertions.assertEquals(texto3[0].split("\n")[0], email);
     }
-
 
 }
