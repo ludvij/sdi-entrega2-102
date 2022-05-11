@@ -53,18 +53,13 @@
         Promise.allSettled(promises).then(() => {
             friendsWithDate.sort(function(a,b) {
                 if(a.messages.length == 0)
-                    return -1;
-                else if(b.messages.length == 0)
                     return 1;
+                else if(b.messages.length == 0)
+                    return -1;
                 else {
-                    let dateA = Date.parse(a.messages[0].createdAt);
-                    let dateB = Date.parse(a.messages[0].createdAt);
-                    if(dateA > dateB)
-                        return -1
-                    else if(dateA < dateB)
-                        return 1
-                    else
-                        return 0
+                    let dateA = new Date(a.messages[0].createdAt)
+                    let dateB = new Date(b.messages[0].createdAt)
+                    return dateB.getTime() -dateA.getTime();
                 }
             })
             friendsWithDate.forEach((value) => {

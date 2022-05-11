@@ -772,7 +772,8 @@ class SdiEntrega2102ApplicationTests {
         List<WebElement> lastFriend = SeleniumUtils.waitLoadElementsBy(driver,
                 "free", "//tbody/tr[" + friends.size() + "]", PO_View.getTimeout());
         // Obtenemos el texto para poder iniciar sesión después con él
-        String[] texto = lastFriend.get(0).getText().split(" ");
+        String email = lastFriend.get(0).getText().split(" ")[0].split("\n")[0];
+        String name = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + friends.size() + "]/td[2]", PO_View.getTimeout()).get(0).getText();
         // Vamos a la conversación, pero puede haber dos formas, dependiendo si hay mensajes previos
         List<WebElement> enlace = driver.findElements(By.xpath("//tbody/tr[" + friends.size() + "]/td[1]/a"));
         if(enlace.size() == 0){
@@ -798,13 +799,13 @@ class SdiEntrega2102ApplicationTests {
         String[] texto2 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
                 PO_View.getTimeout()).get(0).getText().split(" ");
 
-        String email = texto2[0].split("\n")[0];
+        String email2 = texto2[0].split("\n")[0];
         // Nos aseguramos que el usuario aparezca el primero
-        Assertions.assertEquals(texto[0].split("\n")[0], email);
+        Assertions.assertEquals(email, email2);
 
         driver.navigate().to(URL_jQuery);
         // Iniciamos sesión con el usuario B
-        PO_LoginView.loginAsApi(driver, texto[0], texto[1]);
+        PO_LoginView.loginAsApi(driver, email, name);
 
         // Nos vamos a la conversación
         SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"6276375b2af1c3c02e64f551\"]/td[1]/a",
@@ -827,7 +828,7 @@ class SdiEntrega2102ApplicationTests {
         String[] texto3 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
                 PO_View.getTimeout()).get(0).getText().split(" ");
 
-        Assertions.assertEquals(texto3[0], texto[0]);
+        Assertions.assertEquals(texto3[0].split("\n")[0], email);
     }
 
 
