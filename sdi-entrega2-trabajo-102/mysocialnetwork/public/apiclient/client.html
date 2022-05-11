@@ -33,18 +33,15 @@
     let URLbase = "http://localhost:3000/api/v1.0";
     if ( Cookies.get('token') != null ) {
         token = Cookies.get('token');
-        $("#main-container").load("widget-songs.html");
+
         let url = new URL(window.location.href);
 
         let w = url.searchParams.get("w");
         if (w === "login") {
             $("#main-container").load("widget-login.html");
         }
-        if (w === "friends") {
-            $("#main-container").load("widget-friends.html");
-        }
-        if(w === "chat"){
-            $("#main-container").load("widget-chat.html");
+        if (w === "friendList") {
+            $("#main-container").load("widget-friendList.html");
         }
     } else {
         $( "#main-container" ).load("widget-login.html");

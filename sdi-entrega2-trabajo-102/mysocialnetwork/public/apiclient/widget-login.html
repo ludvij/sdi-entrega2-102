@@ -27,6 +27,7 @@
             success:function success(response){
                 console.log(response.token);//Prueba
                 token = response.token;
+                Cookies.set('token', response.token);
                 $("#main-container").load("widget-friendList.html");
             },
             error: function (error){
