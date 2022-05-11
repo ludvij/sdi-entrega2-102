@@ -12,6 +12,7 @@ import com.uniovi.sdi.util.SeleniumUtils;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -19,6 +20,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,11 @@ class SdiEntrega2102ApplicationTests {
     private static MongoCollection<Document> friendshiprequesets;
     private static MongoCollection<Document> postDocument;
     private static MongoCollection<Document> messageDocument;
+
+    //credenciales para el usuario que postea. tests 24 a 26.
+    private static String[] posterUserCredentials = new String[]{"user07@email.com", "user07"};
+    private static List<ObjectId> newPostIds = new ArrayList<>();
+
 
     public static WebDriver getDriver(String PathFirefox, String Geckodriver) {
         System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -74,7 +81,12 @@ class SdiEntrega2102ApplicationTests {
         //Cerramos el navegador al finalizar las pruebas
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
-        postDocument.deleteMany(eq("title", "test_titulo"));
+
+        for (ObjectId postId : newPostIds) {
+            postDocument.deleteMany(eq("_id", postId));
+            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+        }
+
         client.close();
         driver.quit();
     }
@@ -86,7 +98,12 @@ class SdiEntrega2102ApplicationTests {
         // cleanup
         Bson query = eq("name", "test");
         var res = doc.deleteMany(query);
-        doc.deleteMany(eq("title", "test_titulo"));
+
+        for (ObjectId postId : newPostIds) {
+            postDocument.deleteMany(eq("_id", postId));
+            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+        }
+
         Bson messages = eq("text", "Nuevo mensaje");
         messageDocument.deleteMany(messages);
     }
@@ -578,7 +595,10 @@ class SdiEntrega2102ApplicationTests {
     @Order(24)
     // Rellenar el formulario de post con datos válidos y comprobar que se crea el post.
     public void PR24() {
-        PO_LoginView.loginAs(driver, "user07@email.com", "user07");
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
+        List<ObjectId> postIds = (List<ObjectId>) doc.find(eq("email", posterUserCredentials[0])).first().get("posts");
+        List<ObjectId> postIdsAfter;
+
         // Abrimos el menú de posts.
         List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
         elements.get(0).click();
@@ -597,14 +617,21 @@ class SdiEntrega2102ApplicationTests {
         elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo",PO_View.getTimeout());
         elements.get(0).click();
 
+        postIdsAfter = (List<ObjectId>) doc.find(eq("email", posterUserCredentials[0])).first().get("posts");
+        for (ObjectId eachId : postIdsAfter) {
+            if (!postIds.contains(eachId)) {
+                newPostIds.add(eachId);
+            }
+        }
+
         PO_NavView.logout(driver);
     }
 
     @Test
     @Order(25)
-    // Rellenar el formulario de post con datos válidos y comprobar que se crea el post.
+    // Rellenar el formulario de post con datos inválidos y comprobar que no se crea el post.
     public void PR25() {
-        PO_LoginView.loginAs(driver, "user07@email.com", "user07");
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
         // Abrimos el menú de posts.
         List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
         elements.get(0).click();
@@ -614,6 +641,27 @@ class SdiEntrega2102ApplicationTests {
 
         //metemos un campo vacio. este método ya comprueba que no nos movemos de página.
         PO_PostAddView.addPostEmpty(driver, "test_titulo", "");
+
+        PO_NavView.logout(driver);
+    }
+
+    @Test
+    @Order(26)
+    // Listar posts. Es necesario que el usuario 07 tenga algún post propio antes de los test.
+    public void PR26() {
+        PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
+        // Abrimos el menú de posts.
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        elements.get(0).click();
+        // elegimos la opción de listar posts
+        elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
+        elements.get(0).click();
+
+        Document self = doc.find(eq("email", posterUserCredentials[0])).first();
+        //solo tenemos uno
+        List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        List<Object> userPosts = (List<Object>) self.get("posts");
+        Assertions.assertEquals(userPosts.size(), posts.size());
 
         PO_NavView.logout(driver);
     }
