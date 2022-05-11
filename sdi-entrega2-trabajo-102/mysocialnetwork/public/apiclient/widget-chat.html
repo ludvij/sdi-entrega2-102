@@ -4,6 +4,7 @@
         <thead>
         <tr>
             <th>Contenido</th>
+            <th>Envíado el</th>
             <th></th>
         </tr>
         </thead>
@@ -95,12 +96,14 @@
                 $("#messageListBody").append(
                     "<tr id=" + m._id + ">" +
                     "<td>" + m.text + "</td>" +
+                    "<td>" + m.createdAt.split("T") + "</td>" +
                     "<td>Leído</td>"
                 );
             }else{
                 $("#messageListBody").append(
                     "<tr id=" + m._id + ">" +
-                    "<td>" + m.text + "</td>"
+                    "<td>" + m.text + "</td>" +
+                    "<td>" + m.createdAt.split("T") + "</td>"
                 );
             }
 

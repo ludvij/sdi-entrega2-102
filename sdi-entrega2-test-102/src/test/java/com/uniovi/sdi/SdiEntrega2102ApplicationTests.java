@@ -892,9 +892,9 @@ class SdiEntrega2102ApplicationTests {
         List<WebElement>  lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[2]", PO_View.getTimeout());
         Assertions.assertEquals(lastMessage.get(0).getText(), "Leído");
     }
-
-    @Test
-    @Order(39)
+  
+  @Test
+  @Order(39)
     // Validar que salen los mensajes en el chat, entrar con otro usuario y ver que el número de mensajes sin leer aparece
     public void PR39() {
         driver.navigate().to(URL_jQuery);
@@ -934,6 +934,78 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout()).get(0).getText();
 
         Assertions.assertEquals(messagesNonRead, "3");
+    }
+
+    @Test
+    @Order(40)
+    public void PR40(){
+        driver.navigate().to(URL_jQuery);
+        // Iniciamos sesión con el usuario A
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+        // Obtenemos todas las filas
+        List<WebElement> friends = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Obtenemos la última fila, es decir, el último amigo
+        List<WebElement> lastFriend = SeleniumUtils.waitLoadElementsBy(driver,
+                "free", "//tbody/tr[" + friends.size() + "]", PO_View.getTimeout());
+        // Obtenemos el texto para poder iniciar sesión después con él
+        String email = lastFriend.get(0).getText().split(" ")[0].split("\n")[0];
+        String name = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + friends.size() + "]/td[2]", PO_View.getTimeout()).get(0).getText();
+        // Vamos a la conversación, pero puede haber dos formas, dependiendo si hay mensajes previos
+        List<WebElement> enlace = driver.findElements(By.xpath("//tbody/tr[" + friends.size() + "]/td[1]/a"));
+        if(enlace.size() == 0){
+            enlace = SeleniumUtils.waitLoadElementsBy(driver, "free",
+                    "//tbody/tr[" + friends.size() + "]/td[4]/a", PO_View.getTimeout());
+        }
+        enlace.get(0).click();
+
+        // Envíamos un mensaje
+        WebElement message = driver.findElement(By.name("texto"));
+        message.click();
+        message.clear();
+        message.sendKeys("Nuevo mensaje");
+
+        By boton = By.id("boton-enviar");
+        driver.findElement(boton).click();
+
+        driver.navigate().to(URL_jQuery);
+        // Iniciamos sesión con el usuario A
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Obtenemos la primera fila
+        String[] texto2 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
+                PO_View.getTimeout()).get(0).getText().split(" ");
+
+        String email2 = texto2[0].split("\n")[0];
+        // Nos aseguramos que el usuario aparezca el primero
+        Assertions.assertEquals(email, email2);
+
+        driver.navigate().to(URL_jQuery);
+        // Iniciamos sesión con el usuario B
+        PO_LoginView.loginAsApi(driver, email, name);
+
+        // Nos vamos a la conversación
+        SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"6276375b2af1c3c02e64f551\"]/td[1]/a",
+                PO_View.getTimeout()).get(0).click();
+
+        // Envíamos un mensaje
+        message = driver.findElement(By.name("texto"));
+        message.click();
+        message.clear();
+        message.sendKeys("Nuevo mensaje");
+
+        boton = By.id("boton-enviar");
+        driver.findElement(boton).click();
+
+        driver.navigate().to(URL_jQuery);
+        // Iniciamos sesión con el usuario A
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Cogemos el primer amigo y miramos que sea el que acaba de mandar el mensaje
+        String[] texto3 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
+                PO_View.getTimeout()).get(0).getText().split(" ");
+
+        Assertions.assertEquals(texto3[0].split("\n")[0], email);
     }
 
 }

@@ -23,6 +23,8 @@
     var friendId;
     var friendName;
     var messages;
+    var friendsWithDate = [];
+    var promises = [];
     $('#filter-by-name').on('input',function(e){
         let filteredFriends = [];
         let filterValue = $("#filter-by-name").val();
@@ -32,7 +34,7 @@
 
     function loadFriends() {
         console.log("Calling " + URLbase + "/friends");
-        $.ajax({
+        promises.push($.ajax({
             url: URLbase + "/friends",
             type: "GET",
             data: {},
@@ -41,17 +43,36 @@
             success: function (response) {
                 friends = response;
                 updateFriendList(friends);
+
             },
             error: function(error) {
                 $("#main-container").load("widget-login.html");
             }
-        })
+        }))
+
+        Promise.allSettled(promises).then(() => {
+            friendsWithDate.sort(function(a,b) {
+                if(a.messages.length == 0)
+                    return 1;
+                else if(b.messages.length == 0)
+                    return -1;
+                else {
+                    let dateA = new Date(a.messages[0].createdAt)
+                    let dateB = new Date(b.messages[0].createdAt)
+                    return dateB.getTime() -dateA.getTime();
+                }
+            })
+            friendsWithDate.forEach((value) => {
+                setFriendList(value.messages, value.f)
+            })
+            friendsWithDate = [];
+        });
     }
 
     function updateFriendList(friends) {
         $("#friendListBody").empty();
         friends.forEach((f) => {
-            $.ajax({
+            promises.push($.ajax({
                 url: URLbase + "/conversation/" + f._id,
                 type: "GET",
                 data: {},
@@ -59,18 +80,22 @@
                 headers: {"token": token},
                 success: function (response) {
                     messages = response;
-                    setFriendList(messages, f)
+                    let value = {};
+                    value.f = f;
+                    value.messages = messages;
+                    friendsWithDate.push(value);
+                    //setFriendList(messages, f)
                 },
                 error: function(error) {
                     $("#main-container").load("widget-login.html");
                 }
-            })
+            }))
 
         });
     }
 
     function setFriendList(messages, f){
-        if(messages.length >= 2) {
+        if(messages.length > 0) {
             $("#friendListBody").append(
                 "<tr id=" + f._id + ">" +
                 "<td>" + f.email + " <br><a onclick=goConversation('" + f._id + "')>" + messages[0].createdAt.split("T") + " " + messages[0].text + "</a></td>" +
@@ -104,7 +129,9 @@
         return numberOfMessages;
     }
 
-
+    setInterval(function() {
+        loadFriends();
+    }, 1000);
 
     loadFriends();
 
