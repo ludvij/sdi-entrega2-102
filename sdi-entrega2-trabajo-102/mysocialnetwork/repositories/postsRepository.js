@@ -20,5 +20,8 @@ module.exports = {
 	create: async (body) => {
 		let post = new Post(body)
 		return await post.save()
+	},
+	deleteMany: async (ownerId) => {
+		await Post.deleteMany({owner: ownerId})
 	}
 };

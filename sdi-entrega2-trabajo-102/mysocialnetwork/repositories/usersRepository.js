@@ -39,7 +39,8 @@ module.exports = {
     },
 	deleteUser: async (emails) => {
 		if (typeof emails == 'string') {
-			await User.deleteOne({email: emails});
+			const doc = await User.findOne({email: emails});
+			await doc.deleteOne({email: emails});
 		} else if(emails != undefined) {
 			// usage of mongoose thing
 			await User.deleteMany({email: {$in: emails}});

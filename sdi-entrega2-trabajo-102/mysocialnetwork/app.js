@@ -54,7 +54,7 @@ app.use("/posts", userSessionRouter);
 
 require("./routes/users.js")(app, usersRepository, friendshipRequestRepository);
 // TODO: use just the repo
-require("./routes/admin.js")(app, usersRepository);
+require("./routes/admin.js")(app, usersRepository, postsRepository, friendshipRequestRepository);
 require("./routes/posts.js")(app, usersRepository, postsRepository);
 
 require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository, messageRepository)
