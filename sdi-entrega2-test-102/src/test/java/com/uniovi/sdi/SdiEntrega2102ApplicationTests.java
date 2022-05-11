@@ -29,11 +29,11 @@ import java.util.Map;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SdiEntrega2102ApplicationTests {
 
-    //static String Geckodriver = "geckodriver.exe";
-    //static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+    static String Geckodriver = "geckodriver.exe";
+    static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
-    static String Geckodriver = "geckodriver";
-    static String PathFirefox = "/usr/bin/firefox";
+    //static String Geckodriver = "geckodriver.exe";
+    //static String PathFirefox = "/usr/bin/firefox";
 
     static final String URL = "http://localhost:3000";
     static final String URL_jQuery = "http://localhost:3000/apiclient/client.html?w=login";
@@ -62,7 +62,7 @@ class SdiEntrega2102ApplicationTests {
     @BeforeAll
     static public void begin() {
         // mongodb setup
-        try  {
+        try {
             client = MongoClients.create("mongodb+srv://admin:admin@sdibook.1ld9m.mongodb.net/sdibook?retryWrites=true&w=majority");
             database = client.getDatabase("sdibook");
             doc = database.getCollection("users");
@@ -84,7 +84,7 @@ class SdiEntrega2102ApplicationTests {
 
         for (ObjectId postId : newPostIds) {
             postDocument.deleteMany(eq("_id", postId));
-            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+            doc.updateOne(eq("email", posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
         }
 
         client.close();
@@ -101,7 +101,7 @@ class SdiEntrega2102ApplicationTests {
 
         for (ObjectId postId : newPostIds) {
             postDocument.deleteMany(eq("_id", postId));
-            doc.updateOne(eq("email",posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
+            doc.updateOne(eq("email", posterUserCredentials[0]), eq("$pull", eq("posts", eq("$eq", postId))));
         }
 
         Bson messages = eq("text", "Nuevo mensaje");
@@ -219,15 +219,16 @@ class SdiEntrega2102ApplicationTests {
     @Order(12)
     // Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
     // y dicho usuario desaparece.
-    public void PR12(){
+    public void PR12() {
+        PO_SignUpView.signUpAs(driver, "aaaaatest@email.com", "test01", "test", "test");
         PO_LoginView.loginAs(driver, "admin@email.com", "admin");
-        // Recuperamos el usuario para volver a meterlo una vez lo borremos
-        Document user1 = doc.find(eq("email", "user01@email.com")).first();
+
         // Usuarios antes de eliminar
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-        // Marcamos el checkbox del primer usuario (sería el segundo porque el primero es el admin)
-        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[2]/td[4]/input");
+
+        // Marcamos el checkbox del primer usuario
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/input");
         elements.get(0).click();
 
         // Le damos al botón de eliminar
@@ -242,25 +243,21 @@ class SdiEntrega2102ApplicationTests {
         Assertions.assertEquals(usersList.size() - 1, usersListAfter.size());
         //Logout
         PO_HomeView.logout(driver);
-        // Volvemos a insertar el usuario
-        doc.insertOne(user1);
     }
 
     @Test
     @Order(13)
     // Ir a la lista de usuarios, borrar el último usuario de la lista, comprobar que la lista se actualiza
     // y dicho usuario desaparece
-    public void PR13(){
+    public void PR13() {
+        PO_SignUpView.signUpAs(driver, "user09999@email.com", "test01", "test", "test");
         PO_LoginView.loginAs(driver, "admin@email.com", "admin");
 
         // Usuarios antes de eliminar
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-        // Obtenemos el email del último usuario de la lista
-        String[] fila = usersList.get(usersList.size() - 1).getText().split(" ");
-        // Recuperamos el usuario en la última posición para volver a meterlo una vez lo borremos
-        Document user1 = doc.find(eq("email", fila[0])).first();
-        // Marcamos el checkbox del primer usuario (sería el segundo porque el primero es el admin)
+
+        // Marcamos el checkbox del último usuario
         List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + usersList.size() + "]/td[4]/input");
         elements.get(0).click();
 
@@ -276,34 +273,28 @@ class SdiEntrega2102ApplicationTests {
         Assertions.assertEquals(usersList.size() - 1, usersListAfter.size());
         //Logout
         PO_HomeView.logout(driver);
-        // Volvemos a insertar el usuario
-        doc.insertOne(user1);
     }
 
     @Test
     @Order(14)
     // Ir a la lista de usuarios, borrar tres usuarios de la lista, comprobar que la lista se actualiza
     // y dichos usuarios desaparecen
-    public void PR14(){
+    public void PR14() {
+        PO_SignUpView.signUpAs(driver, "aaaaaatest@email.com", "test01", "test", "test");
+        PO_SignUpView.signUpAs(driver, "aaaaaaatest@email.com", "test01", "test", "test");
+        PO_SignUpView.signUpAs(driver, "aaaaaaaatest@email.com", "test01", "test", "test");
         PO_LoginView.loginAs(driver, "admin@email.com", "admin");
 
         // Usuarios antes de eliminar
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-        // Obtenemos el email del último usuario de la lista
-        String[] fila1 = usersList.get(usersList.size() - 1).getText().split(" ");
-        String[] fila2 = usersList.get(usersList.size() - 2).getText().split(" ");
-        String[] fila3 = usersList.get(usersList.size() - 3).getText().split(" ");
-        // Recuperamos los usuarios para luego meterlos
-        Document user1 = doc.find(eq("email", fila1[0])).first();
-        Document user2 = doc.find(eq("email", fila2[0])).first();
-        Document user3 = doc.find(eq("email", fila3[0])).first();
-        // Marcamos las checkboxes del primer usuario (sería el segundo porque el primero es el admin)
-        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + usersList.size() + "]/td[4]/input");
+
+        // Marcamos las checkboxes de los tres primeros
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/input");
         elements.get(0).click();
-        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + (usersList.size() - 1) + "]/td[4]/input");
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[2]/td[4]/input");
         elements.get(0).click();
-        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[" + (usersList.size() - 2) + "]/td[4]/input");
+        elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[3]/td[4]/input");
         elements.get(0).click();
 
         // Le damos al botón de eliminar
@@ -313,11 +304,6 @@ class SdiEntrega2102ApplicationTests {
         // Usuarios despues de eliminar
         List<WebElement> usersListAfter = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-
-        // Volvemos a insertar los usuarios
-        doc.insertOne(user1);
-        doc.insertOne(user2);
-        doc.insertOne(user3);
 
         // Debería haber tres usuarios menos
         Assertions.assertEquals(usersList.size() - 3, usersListAfter.size());
@@ -330,7 +316,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(15)
     // Mostrar el listado de usuarios y comprobar que se muestran todos los que existen en el sistema, excepto el
     // propio usuario y aquellos que sean Administradores
-    public void PR15(){
+    public void PR15() {
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
 
         //Contamos el número de filas de usuarios
@@ -373,6 +359,10 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout());
         // Pasamos de página
         PO_View.checkElementBy(driver, "free", "/html/body/div/div[2]/ul/li[2]/a").get(0).click();
+        searchList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout()));
+        // Pasamos de página
+        PO_View.checkElementBy(driver, "free", "/html/body/div/div[2]/ul/li[3]/a").get(0).click();
         searchList.addAll(SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout()));
 
@@ -436,24 +426,24 @@ class SdiEntrega2102ApplicationTests {
     @Order(19)
     // Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario. Comprobar que la
     // solicitud de amistad aparece en el listado de invitaciones.
-    public void PR19(){
-        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+    public void PR19() {
+        PO_SignUpView.signUpAs(driver, "atest01@email.com", "test01", "test", "test");
+        PO_SignUpView.signUpAs(driver, "atest02@email.com", "test02", "test", "test");
+        PO_LoginView.loginAs(driver, "atest01@email.com", "test01");
 
         // Obtenemos cada una de las filas
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
                 , PO_View.getTimeout());
-        // Cogemos el texto del primer usuario, por ejemplo
-        String[] texto = usersList.get(0).getText().split(" ");
 
         // Enviamos la solicitud al primer usuario
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         elements.get(0).click();
 
         // Para ver la solicitud nos tenemos que logear con el otro usuario
         PO_HomeView.logout(driver);
 
         // Iniciamos sesión con los datos que obtuvimos antes
-        PO_LoginView.loginAs(driver, texto[0], texto[1]);
+        PO_LoginView.loginAs(driver, "atest02@email.com", "test02");
         // Vamos al menú de solicitudes
         PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a").get(0).click();
         List<WebElement> solicitudes = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
@@ -472,17 +462,17 @@ class SdiEntrega2102ApplicationTests {
     // Desde el listado de usuarios de la aplicación, enviar una invitación de amistad a un usuario al que ya le
     // habíamos enviado la invitación previamente. No debería dejarnos enviar la invitación o notificar que ya había
     // sido enviada previamente.
-    public void PR20(){
-        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+    public void PR20() {
+        PO_SignUpView.signUpAs(driver, "atest01@email.com", "test01", "test", "test");
+        PO_SignUpView.signUpAs(driver, "atest02@email.com", "test02", "test", "test");
+        PO_LoginView.loginAs(driver, "atest01@email.com", "test01");
 
         // Obtenemos cada una de las filas
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
                 , PO_View.getTimeout());
-        // Obtenemos el texto del primer usuario
-        String[] texto = usersList.get(0).getText().split(" ");
 
-        // Le enviamos la solicitud
-        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        // Le enviamos la solicitud al primero
+        List<WebElement> sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         sendList.get(0).click();
 
         // Volvemos a darle al botón de enviar, el cual no debería de estar
@@ -492,7 +482,7 @@ class SdiEntrega2102ApplicationTests {
         // Hacemos como en la prueba anterior, denegar la solicitud para dejar las cosas como estaban
         PO_HomeView.logout(driver);
 
-        PO_LoginView.loginAs(driver, texto[0], texto[1]);
+        PO_LoginView.loginAs(driver, "atest02@email.com", "test02");
         PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a").get(0).click();
         List<WebElement> solicitudes = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
                 , PO_View.getTimeout());
@@ -510,7 +500,7 @@ class SdiEntrega2102ApplicationTests {
         PO_SignUpView.signUpAs(driver, "atest01@email.com", "atest01", "test", "atest");
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
         // Le enviamos la solicitud
-        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        List<WebElement> sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         sendList.get(0).click();
 
         PO_HomeView.logout(driver);
@@ -523,7 +513,7 @@ class SdiEntrega2102ApplicationTests {
         PO_LoginView.loginAs(driver, "atest01@email.com", "atest01");
 
         // Pinchamos en la opción de solicitudes
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
         elements.get(0).click();
         List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
@@ -540,7 +530,7 @@ class SdiEntrega2102ApplicationTests {
         PO_SignUpView.signUpAs(driver, "atest01@email.com", "atest01", "test", "atest");
         PO_LoginView.loginAs(driver, "user01@email.com", "user01");
         // Le enviamos la solicitud
-        List<WebElement>  sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
+        List<WebElement> sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         sendList.get(0).click();
 
         PO_HomeView.logout(driver);
@@ -553,7 +543,7 @@ class SdiEntrega2102ApplicationTests {
         PO_LoginView.loginAs(driver, "atest01@email.com", "atest01");
 
         // Pinchamos en la opcion de solicitudes
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myrequests\"]/a");
         elements.get(0).click();
         List<WebElement> requestList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
@@ -575,7 +565,7 @@ class SdiEntrega2102ApplicationTests {
     public void PR23() {
         PO_LoginView.loginAs(driver, "user07@email.com", "user07");
         // Vamos a la opcion para mostrar el listado.
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myfriends\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myfriends\"]/a");
         elements.get(0).click();
 
         //Check how many friends appear.
@@ -600,7 +590,7 @@ class SdiEntrega2102ApplicationTests {
         List<ObjectId> postIdsAfter;
 
         // Abrimos el menú de posts.
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
         elements.get(0).click();
         // elegimos la opción de crear un nuevo post
         elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
@@ -614,7 +604,7 @@ class SdiEntrega2102ApplicationTests {
         elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
         elements.get(0).click();
 
-        elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo",PO_View.getTimeout());
+        elements = SeleniumUtils.waitLoadElementsBy(driver, "text", "test_titulo", PO_View.getTimeout());
         elements.get(0).click();
 
         postIdsAfter = (List<ObjectId>) doc.find(eq("email", posterUserCredentials[0])).first().get("posts");
@@ -633,7 +623,7 @@ class SdiEntrega2102ApplicationTests {
     public void PR25() {
         PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
         // Abrimos el menú de posts.
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
         elements.get(0).click();
         // elegimos la opción de crear un nuevo post
         elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_crear\"]");
@@ -651,7 +641,7 @@ class SdiEntrega2102ApplicationTests {
     public void PR26() {
         PO_LoginView.loginAs(driver, posterUserCredentials[0], posterUserCredentials[1]);
         // Abrimos el menú de posts.
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"myposts\"]/a");
         elements.get(0).click();
         // elegimos la opción de listar posts
         elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
@@ -712,6 +702,7 @@ class SdiEntrega2102ApplicationTests {
         // Comprobar que sale un error de autorización
         PO_View.checkError(driver);
     }
+
     @Test
     @Order(29)
     public void PR29() {
@@ -741,9 +732,9 @@ class SdiEntrega2102ApplicationTests {
         String text = "No puedes ver la lista de amigos de otro";
         List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
         Assertions.assertEquals(text, result.get(0).getText());
-	}
-	
-	@Test
+    }
+
+    @Test
     @Order(32)
     //Inicio de sesión con datos válidos.
     public void PR32() {
@@ -771,7 +762,7 @@ class SdiEntrega2102ApplicationTests {
         PO_LoginView.loginAsApi(driver, "user07@email.com", "user07");
 
         //Check how many friends appear
-        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//table[@class='table table-hover']/tbody/tr");
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//table[@class='table table-hover']/tbody/tr");
         int numberOfFriends = elements.size();
 
         //Check the friends in the Database.
@@ -785,9 +776,40 @@ class SdiEntrega2102ApplicationTests {
     }
 
     @Test
+    @Order(35)
+    // Acceder a la lista de amigos de un usuario, y realizar un filtrado para encontrar a un amigo concreto, el nombre
+    // a buscar debe coincidir con el de un amigo
+    public void PR35(){
+        driver.navigate().to(URL_jQuery);
+        PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+
+        // Escribimos el nombre del usuario a filtrar
+        WebElement message = driver.findElement(By.id("filter-by-name"));
+        message.click();
+        message.clear();
+        message.sendKeys("user02");
+
+        // Filtramos
+        List<WebElement> element = PO_View.checkElementBy(driver, "free", "//*[@id=\"widget-friendList\"]/button");
+        element.get(0).click();
+
+        // Vemos cuantas filas hay, que corresponden a los amigos
+        List<WebElement> friends = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        // Solo hay un usuario que se llame user02
+        Assertions.assertEquals(1, friends.size());
+
+        // Sacamos el nombre
+        String name = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]/td[2]",
+                PO_View.getTimeout()).get(0).getText();
+
+        Assertions.assertEquals("user02", name);
+    }
+
+    @Test
     @Order(36)
     // Acceder a la lista de mensajes de un amigo, la lista debe contener al menos tres mensajes.
-    public void PR36(){
+    public void PR36() {
         driver.navigate().to(URL_jQuery);
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
 
@@ -806,7 +828,7 @@ class SdiEntrega2102ApplicationTests {
 
     @Test
     @Order(37)
-    // Enviar un mensaje y conprobar que aparece en la lista
+    // Enviar un mensaje y comprobar que aparece en la lista
     public void PR37() {
         driver.navigate().to(URL_jQuery);
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
@@ -869,9 +891,9 @@ class SdiEntrega2102ApplicationTests {
 
         // Nos aseguramos que aparece el mensaje nuevo
         Assertions.assertEquals(messagesBefore.size(), messagesAfter.size() - 1);
-
-        // Nos logueamos con el usuario al que le envíamos el mensaje
-        driver.navigate().to(URL_jQuery);
+        // Le damos a logout
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
+        // Nos logueamos con el usuario al que le enviamos el mensaje
         PO_LoginView.loginAsApi(driver, "user02@email.com", "user02");
 
         // Obtenemos el número de mensajes sin leer
@@ -889,12 +911,12 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout());
 
         // Obtenemos el último mensaje y comprobamos que esté leído
-        List<WebElement>  lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[2]", PO_View.getTimeout());
+        List<WebElement> lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[3]", 3);
         Assertions.assertEquals(lastMessage.get(0).getText(), "Leído");
     }
-  
-  @Test
-  @Order(39)
+
+    @Test
+    @Order(39)
     // Validar que salen los mensajes en el chat, entrar con otro usuario y ver que el número de mensajes sin leer aparece
     public void PR39() {
         driver.navigate().to(URL_jQuery);
@@ -926,7 +948,8 @@ class SdiEntrega2102ApplicationTests {
         Assertions.assertEquals(messagesBefore.size() + 3, messagesAfter.size());
 
         // Nos logueamos con el usuario al que le envíamos el mensaje
-        driver.navigate().to(URL_jQuery);
+        // Le damos a logout
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
         PO_LoginView.loginAsApi(driver, "user02@email.com", "user02");
 
         // Obtenemos el número de mensajes sin leer
@@ -938,7 +961,11 @@ class SdiEntrega2102ApplicationTests {
 
     @Test
     @Order(40)
-    public void PR40(){
+    // Identificarse con un usuario A que al menos tenga 3 amigos. Ir al chat del último amigo de la lista y enviarle
+    // un mensaje. Volver a la lista de amigos y comprobar que el usuario al que se le ha enviado el mensaje está en
+    // primera posición. Identificarse con el usuario B y enviarle un mensaje al usuario A. Volver a identificarse con
+    // el usuario A y ver que el usuario que acaba de mandarle el mensaje es el primero en su lista de amigos.
+    public void PR40()   {
         driver.navigate().to(URL_jQuery);
         // Iniciamos sesión con el usuario A
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
@@ -953,7 +980,7 @@ class SdiEntrega2102ApplicationTests {
         String name = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + friends.size() + "]/td[2]", PO_View.getTimeout()).get(0).getText();
         // Vamos a la conversación, pero puede haber dos formas, dependiendo si hay mensajes previos
         List<WebElement> enlace = driver.findElements(By.xpath("//tbody/tr[" + friends.size() + "]/td[1]/a"));
-        if(enlace.size() == 0){
+        if (enlace.size() == 0) {
             enlace = SeleniumUtils.waitLoadElementsBy(driver, "free",
                     "//tbody/tr[" + friends.size() + "]/td[4]/a", PO_View.getTimeout());
         }
@@ -968,7 +995,8 @@ class SdiEntrega2102ApplicationTests {
         By boton = By.id("boton-enviar");
         driver.findElement(boton).click();
 
-        driver.navigate().to(URL_jQuery);
+        // Le damos a logout
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
         // Iniciamos sesión con el usuario A
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
 
@@ -980,7 +1008,8 @@ class SdiEntrega2102ApplicationTests {
         // Nos aseguramos que el usuario aparezca el primero
         Assertions.assertEquals(email, email2);
 
-        driver.navigate().to(URL_jQuery);
+        // Le damos a logout
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
         // Iniciamos sesión con el usuario B
         PO_LoginView.loginAsApi(driver, email, name);
 
@@ -997,10 +1026,10 @@ class SdiEntrega2102ApplicationTests {
         boton = By.id("boton-enviar");
         driver.findElement(boton).click();
 
-        driver.navigate().to(URL_jQuery);
+        // Le damos a logout
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
         // Iniciamos sesión con el usuario A
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
-
         // Cogemos el primer amigo y miramos que sea el que acaba de mandar el mensaje
         String[] texto3 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
                 PO_View.getTimeout()).get(0).getText().split(" ");

@@ -21,7 +21,7 @@
             <img src="/images/logo.png" alt="logo"/></div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav" id="barra-menu">
-                <li><a>Option</a></li>
+
             </ul>
             <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha"> <!-- Opciones de menú aqui --> </ul>
         </div>
@@ -33,18 +33,28 @@
     let URLbase = "http://localhost:3000/api/v1.0";
     if ( Cookies.get('token') != null ) {
         token = Cookies.get('token');
-
+        $("#main-container").load("widget-friendList.html");
         let url = new URL(window.location.href);
 
         let w = url.searchParams.get("w");
-        if (w === "login") {
-            $("#main-container").load("widget-login.html");
-        }
         if (w === "friendList") {
             $("#main-container").load("widget-friendList.html");
         }
+        $("#barra-menu").append("<li><a onclick='listaAmigos()'>Amigos</a></li>")
+        $("#barra-menu-derecha").append("<li><a onclick='logout()'>Logout</a></li>")
     } else {
+
         $( "#main-container" ).load("widget-login.html");
+    }
+
+    function listaAmigos(){
+        $("#main-container").load("widget-friendList.html");
+    }
+    function logout(){
+        Cookies.remove('token')
+        $("#barra-menu").empty()
+        $("#barra-menu-derecha").empty()
+        $("#main-container").load("widget-login.html");
     }
 </script>
 </body>
