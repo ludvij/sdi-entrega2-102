@@ -1,12 +1,12 @@
 let express = require('express');
 let cookieParser = require('cookie-parser');
-let logger = require('morgan');
 let path = require('path');
 let createError = require('http-errors');
 let crypto = require("crypto");
 let jwt = require('jsonwebtoken')
 let app = express();
 let bodyParser = require("body-parser");
+const logger = require('./logger')
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -60,16 +60,14 @@ require("./routes/posts.js")(app, usersRepository, postsRepository);
 require('./routes/api/sdibookAPIv1.0.js')(app, usersRepository, messageRepository)
 
 var indexRouter = require('./routes/index');
-app.use('/', indexRouter);
 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
 
-app.use('/', indexRouter);
 
-app.use(logger('dev'));
+app.use('/', indexRouter);
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
@@ -86,7 +84,7 @@ app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    console.log("Se ha producido un error: " + err);
+    logger.error("Se ha producido un error: " + err);
 
     // render the error page
     res.status(err.status || 500);

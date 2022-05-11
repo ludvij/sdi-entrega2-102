@@ -25,7 +25,6 @@
             },
             dataType:"json",
             success:function success(response){
-                console.log(response.token);//Prueba
                 token = response.token;
                 $("#main-container").load("widget-friendList.html");
             },

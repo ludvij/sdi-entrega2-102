@@ -1,3 +1,5 @@
+const logger = require('../logger')
+
 module.exports = (app, usersRepository) => {
 
     app.get('/admin/list', async (req, res) => {
@@ -12,7 +14,7 @@ module.exports = (app, usersRepository) => {
 			res.render('admin/list.twig', {users: users, user: req.session.user});
 		} catch (error) {
 
-			console.log(error);
+			logger.error(error);
 		}
 	});
 
