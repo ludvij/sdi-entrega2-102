@@ -1,6 +1,6 @@
 <div id="widget-friendList">
     <input type="text" class="form-control" placeholder="Filtrar por nombre" id="filter-by-name"/>
-    <button class="btn" onclick="loadFriends()" >Actualizar</button>
+    <button class="btn" onclick="filter()" >Actualizar</button>
 
     <table class="table table-hover" id="tableFriends">
         <thead>
@@ -26,18 +26,18 @@
     var promises = [];
     var isFiltering = false;
     let filterValue;
-    $('#filter-by-name').on('input',function(e){
-        let filteredFriends = [];
+
+
+    function filter(){
         filterValue = $("#filter-by-name").val();
         if(filterValue == "")
             isFiltering = false;
         else
             isFiltering = true;
-        //filteredFriends = friends.filter(f => f.name.includes(filterValue));
-    });
+        loadFriends()
+    }
 
     function loadFriends() {
-
         promises.push($.ajax({
             url: URLbase + "/friends",
             type: "GET",
@@ -53,8 +53,6 @@
                 $("#main-container").load("widget-login.html");
             }
         }))
-
-
     }
 
     function updateFriendList(friendList) {
@@ -137,10 +135,10 @@
         return numberOfMessages;
     }
 
-    setInterval(function() {
-        loadFriends();
+    setInterval(async function() {
+        await loadFriends();
     }, 1000);
 
-    loadFriends();
+    //loadFriends();
 
 </script>

@@ -780,7 +780,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(35)
     // Acceder a la lista de amigos de un usuario, y realizar un filtrado para encontrar a un amigo concreto, el nombre
     // a buscar debe coincidir con el de un amigo
-    public void PR35(){
+    public void PR35() throws InterruptedException {
         driver.navigate().to(URL_jQuery);
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
 
@@ -791,12 +791,13 @@ class SdiEntrega2102ApplicationTests {
         message.sendKeys("user02");
 
         // Filtramos
-        List<WebElement> element = PO_View.checkElementBy(driver, "free", "//*[@id=\"widget-friendList\"]/button");
+        List<WebElement> element = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"widget-friendList\"]/button",
+                PO_View.getTimeout());
         element.get(0).click();
 
         // Vemos cuantas filas hay, que corresponden a los amigos
         List<WebElement> friends = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
-                PO_View.getTimeout());
+                4000);
         // Solo hay un usuario que se llame user02
         Assertions.assertEquals(1, friends.size());
 
@@ -805,6 +806,7 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout()).get(0).getText();
 
         Assertions.assertEquals("user02", name);
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
     }
 
     @Test
@@ -825,6 +827,7 @@ class SdiEntrega2102ApplicationTests {
 
         // Nos aseguramos que hay al menos 3 mensajes
         Assertions.assertTrue(messages.size() >= 3);
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
     }
 
     @Test
@@ -858,6 +861,7 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout());
 
         Assertions.assertEquals(messagesBefore.size() + 1, messagesAfter.size());
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
     }
 
     @Test
@@ -914,6 +918,7 @@ class SdiEntrega2102ApplicationTests {
         // Obtenemos el último mensaje y comprobamos que esté leído
         List<WebElement> lastMessage = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + messages.size() + "]/td[3]", 3);
         Assertions.assertEquals(lastMessage.get(0).getText(), "Leído");
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
     }
 
     @Test
@@ -958,6 +963,7 @@ class SdiEntrega2102ApplicationTests {
                 PO_View.getTimeout()).get(0).getText();
 
         Assertions.assertEquals(messagesNonRead, "3");
+        driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
     }
 
     @Test
@@ -966,7 +972,7 @@ class SdiEntrega2102ApplicationTests {
     // un mensaje. Volver a la lista de amigos y comprobar que el usuario al que se le ha enviado el mensaje está en
     // primera posición. Identificarse con el usuario B y enviarle un mensaje al usuario A. Volver a identificarse con
     // el usuario A y ver que el usuario que acaba de mandarle el mensaje es el primero en su lista de amigos.
-    public void PR40()   {
+    public void PR40() {
         driver.navigate().to(URL_jQuery);
         // Iniciamos sesión con el usuario A
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
@@ -979,6 +985,9 @@ class SdiEntrega2102ApplicationTests {
         // Obtenemos el texto para poder iniciar sesión después con él
         String email = lastFriend.get(0).getText().split(" ")[0].split("\n")[0];
         String name = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[" + friends.size() + "]/td[2]", PO_View.getTimeout()).get(0).getText();
+
+        Document user = doc.find(eq("email", email)).first();
+
         // Vamos a la conversación, pero puede haber dos formas, dependiendo si hay mensajes previos
         List<WebElement> enlace = driver.findElements(By.xpath("//tbody/tr[" + friends.size() + "]/td[1]/a"));
         if (enlace.size() == 0) {
@@ -1031,10 +1040,10 @@ class SdiEntrega2102ApplicationTests {
         driver.findElement(By.xpath("//*[@id=\"barra-menu-derecha\"]/li/a")).click();
         // Iniciamos sesión con el usuario A
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
+        //Thread.sleep(1000);
         // Cogemos el primer amigo y miramos que sea el que acaba de mandar el mensaje
-        String[] texto3 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr[1]",
+        String[] texto3 = SeleniumUtils.waitLoadElementsBy(driver, "free", "//*[@id=\"" + user.get("_id") + "\"]",
                 PO_View.getTimeout()).get(0).getText().split(" ");
-
         Assertions.assertEquals(texto3[0].split("\n")[0], email);
     }
 
