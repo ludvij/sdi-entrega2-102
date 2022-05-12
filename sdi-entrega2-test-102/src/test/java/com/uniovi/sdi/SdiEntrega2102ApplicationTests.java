@@ -650,8 +650,7 @@ class SdiEntrega2102ApplicationTests {
         Document self = doc.find(eq("email", posterUserCredentials[0])).first();
         //solo tenemos uno
         List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
-        List<Object> userPosts = (List<Object>) self.get("posts");
-        Assertions.assertEquals(userPosts.size(), posts.size());
+        Assertions.assertEquals(5, posts.size());
 
         PO_NavView.logout(driver);
     }
@@ -682,8 +681,7 @@ class SdiEntrega2102ApplicationTests {
         // Vemos cuántas filas hay
         List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-        List<Object> userPosts = (List<Object>) friend.get("posts");
-        Assertions.assertEquals(userPosts.size(), posts.size());
+        Assertions.assertEquals(5, posts.size());
         PO_HomeView.logout(driver);
 
     }

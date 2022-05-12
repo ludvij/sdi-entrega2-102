@@ -1,4 +1,5 @@
-const {Post} = require('../schemas/schema')
+const {Post, User} = require('../schemas/schema');
+
 
 
 module.exports = {
@@ -12,14 +13,18 @@ module.exports = {
 	getPostsPg: async (filter, options, page) => {
 		const limit = 5;
 		const postsCollectionCount = await Post.count(filter);
-		let result;
-		let data = await Post.find(filter, options).skip((page - 1) * limit).limit(limit)
+		let data = await Post.find(filter, options).sort({createdAt: -1}).skip((page - 1) * limit).limit(limit)
 		
 		return {data: data, total: postsCollectionCount};
     },
 	create: async (body) => {
 		let post = new Post(body)
-		return await post.save()
+		let user = await User.findById(post.owner)
+		user.posts.push(post._id)
+		post = await post.save()
+		await user.save() 
+		return post
+
 	},
 	deleteMany: async (ownerId) => {
 		await Post.deleteMany({owner: ownerId})

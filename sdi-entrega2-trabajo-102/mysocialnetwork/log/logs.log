@@ -34,3 +34,468 @@
 2022-05-11T19:04:09.345Z [info] : user01@email.com -> /users/requests/list/decline/627c089e6f37901de9d3d7dc
 2022-05-11T19:04:09.492Z [info] : user01@email.com has declined a friendship request from: [test23@email.com]
 2022-05-11T19:04:09.502Z [info] : user01@email.com -> /users/requests/list
+2022-05-12T15:55:19.688Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T15:55:21.902Z [info] : created user: test01@email.com
+2022-05-12T15:55:30.665Z [info] : created user: test01@email.com
+2022-05-12T15:55:33.227Z [info] : admin@email.com has logged in
+2022-05-12T15:55:33.230Z [info] : admin@email.com -> /list
+2022-05-12T15:55:34.278Z [info] : user01@email.com has logged in
+2022-05-12T15:55:34.282Z [info] : user01@email.com -> /users/list
+2022-05-12T15:55:39.450Z [info] : user01@email.com has logged in
+2022-05-12T15:55:39.455Z [info] : user01@email.com -> /users/list
+2022-05-12T15:55:43.070Z [info] : admin@email.com has logged in
+2022-05-12T15:55:43.072Z [info] : admin@email.com -> /list
+2022-05-12T15:55:43.516Z [info] : admin@email.com -> /list
+2022-05-12T15:55:45.589Z [info] : created user: aaaaatest@email.com
+2022-05-12T15:55:46.404Z [info] : admin@email.com has logged in
+2022-05-12T15:55:46.407Z [info] : admin@email.com -> /list
+2022-05-12T15:55:46.904Z [info] : admin@email.com -> /delete
+2022-05-12T15:55:47.141Z [info] : admin@email.com -> /list
+2022-05-12T15:55:49.137Z [info] : created user: user09999@email.com
+2022-05-12T15:55:49.970Z [info] : admin@email.com has logged in
+2022-05-12T15:55:49.972Z [info] : admin@email.com -> /list
+2022-05-12T15:55:50.480Z [info] : admin@email.com -> /delete
+2022-05-12T15:55:50.715Z [info] : admin@email.com -> /list
+2022-05-12T15:55:52.730Z [info] : created user: aaaaaatest@email.com
+2022-05-12T15:55:54.352Z [info] : created user: aaaaaaatest@email.com
+2022-05-12T15:55:55.985Z [info] : created user: aaaaaaaatest@email.com
+2022-05-12T15:55:56.809Z [info] : admin@email.com has logged in
+2022-05-12T15:55:56.811Z [info] : admin@email.com -> /list
+2022-05-12T15:55:57.845Z [info] : admin@email.com -> /delete
+2022-05-12T15:55:58.538Z [info] : admin@email.com -> /list
+2022-05-12T15:55:59.752Z [info] : user01@email.com has logged in
+2022-05-12T15:55:59.755Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:00.125Z [info] : user01@email.com -> /users/list/?page=2
+2022-05-12T15:56:00.437Z [info] : user01@email.com -> /users/list/?page=3
+2022-05-12T15:56:01.635Z [info] : user01@email.com has logged in
+2022-05-12T15:56:01.639Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:01.964Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:02.227Z [info] : user01@email.com -> /users/list?search=
+2022-05-12T15:56:02.538Z [info] : user01@email.com -> /users/list/?page=2&search=
+2022-05-12T15:56:02.849Z [info] : user01@email.com -> /users/list/?page=3&search=
+2022-05-12T15:56:04.234Z [info] : user01@email.com has logged in
+2022-05-12T15:56:04.236Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:04.548Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:05.076Z [info] : user01@email.com -> /users/list?search=usuarionoexistente
+2022-05-12T15:56:06.381Z [info] : user01@email.com has logged in
+2022-05-12T15:56:06.385Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:06.696Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:07.223Z [info] : user01@email.com -> /users/list?search=al
+2022-05-12T15:56:09.364Z [info] : created user: atest01@email.com
+2022-05-12T15:56:10.998Z [info] : created user: atest02@email.com
+2022-05-12T15:56:11.820Z [info] : atest01@email.com has logged in
+2022-05-12T15:56:11.823Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:12.179Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T15:56:12.367Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T15:56:12.369Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:13.502Z [info] : atest02@email.com has logged in
+2022-05-12T15:56:13.504Z [info] : atest02@email.com -> /users/list
+2022-05-12T15:56:13.833Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T15:56:14.113Z [info] : atest02@email.com -> /users/requests/list/decline/627d2e1c73c15bf1ac3a99c4
+2022-05-12T15:56:14.252Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T15:56:14.254Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T15:56:16.068Z [info] : created user: atest01@email.com
+2022-05-12T15:56:18.076Z [info] : created user: atest02@email.com
+2022-05-12T15:56:18.898Z [info] : atest01@email.com has logged in
+2022-05-12T15:56:18.900Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:19.261Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T15:56:19.442Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T15:56:19.444Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:20.623Z [info] : atest02@email.com has logged in
+2022-05-12T15:56:20.625Z [info] : atest02@email.com -> /users/list
+2022-05-12T15:56:20.952Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T15:56:21.217Z [info] : atest02@email.com -> /users/requests/list/decline/627d2e2373c15bf1ac3a99e3
+2022-05-12T15:56:21.354Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T15:56:21.357Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T15:56:23.167Z [info] : created user: atest01@email.com
+2022-05-12T15:56:23.993Z [info] : user01@email.com has logged in
+2022-05-12T15:56:23.997Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:24.305Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T15:56:24.487Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T15:56:24.489Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:25.632Z [info] : user02@email.com has logged in
+2022-05-12T15:56:25.635Z [info] : user02@email.com -> /users/list
+2022-05-12T15:56:25.946Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T15:56:26.128Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T15:56:26.130Z [info] : user02@email.com -> /users/list
+2022-05-12T15:56:27.272Z [info] : atest01@email.com has logged in
+2022-05-12T15:56:27.274Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:27.585Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T15:56:29.728Z [info] : created user: atest01@email.com
+2022-05-12T15:56:30.544Z [info] : user01@email.com has logged in
+2022-05-12T15:56:30.546Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:30.869Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T15:56:31.051Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T15:56:31.053Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:32.190Z [info] : user02@email.com has logged in
+2022-05-12T15:56:32.192Z [info] : user02@email.com -> /users/list
+2022-05-12T15:56:32.504Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T15:56:32.686Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T15:56:32.689Z [info] : user02@email.com -> /users/list
+2022-05-12T15:56:33.831Z [info] : atest01@email.com has logged in
+2022-05-12T15:56:33.833Z [info] : atest01@email.com -> /users/list
+2022-05-12T15:56:34.143Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T15:56:34.468Z [info] : atest01@email.com -> /users/requests/list/accept/627d2e2f73c15bf1ac3a9a27
+2022-05-12T15:56:34.753Z [info] : atest01@email.com has accepted a friendship request from: [user01@email.com]
+2022-05-12T15:56:34.755Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T15:56:36.055Z [info] : user07@email.com has logged in
+2022-05-12T15:56:36.057Z [info] : user07@email.com -> /users/list
+2022-05-12T15:56:36.365Z [info] : user07@email.com -> /friends/627637f92af1c3c02e64f55d
+2022-05-12T15:56:37.671Z [info] : user07@email.com has logged in
+2022-05-12T15:56:37.675Z [info] : user07@email.com -> /users/list
+2022-05-12T15:56:38.295Z [info] : user07@email.com -> /posts/add
+2022-05-12T15:56:38.892Z [info] : user07@email.com -> /posts/add
+2022-05-12T15:56:39.049Z [info] : user07@email.com has created a new post: [627637f92af1c3c02e64f55d]
+2022-05-12T15:56:39.051Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T15:56:39.588Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T15:56:42.741Z [info] : user07@email.com has logged in
+2022-05-12T15:56:42.743Z [info] : user07@email.com -> /users/list
+2022-05-12T15:56:43.335Z [info] : user07@email.com -> /posts/add
+2022-05-12T15:56:45.231Z [info] : user07@email.com has logged in
+2022-05-12T15:56:45.234Z [info] : user07@email.com -> /users/list
+2022-05-12T15:56:45.814Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T15:56:46.966Z [info] : user01@email.com has logged in
+2022-05-12T15:56:46.968Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:47.278Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T15:56:47.558Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T15:56:47.603Z [error] : u.equals is not a function
+2022-05-12T15:56:50.644Z [info] : user01@email.com has logged in
+2022-05-12T15:56:50.648Z [info] : user01@email.com -> /users/list
+2022-05-12T15:56:50.904Z [info] : user01@email.com -> /posts/list/randomuser@email.com
+2022-05-12T15:56:53.201Z [info] : created user: test@email.com
+2022-05-12T15:56:54.023Z [info] : test@email.com has logged in
+2022-05-12T15:56:54.025Z [info] : test@email.com -> /users/list
+2022-05-12T15:56:54.283Z [info] : test@email.com -> /friends/3231231
+2022-05-12T15:58:47.865Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T15:58:49.088Z [info] : user07@email.com has logged in
+2022-05-12T15:58:49.094Z [info] : user07@email.com -> /users/list
+2022-05-12T15:58:49.739Z [info] : user07@email.com -> /posts/add
+2022-05-12T15:58:50.330Z [info] : user07@email.com -> /posts/add
+2022-05-12T15:58:50.483Z [info] : user07@email.com has created a new post: [627d2eba8277ebceb962c5cd]
+2022-05-12T15:58:50.486Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T15:58:51.030Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T15:59:15.865Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T15:59:20.690Z [info] : user01@email.com has logged in
+2022-05-12T15:59:20.696Z [info] : user01@email.com -> /users/list
+2022-05-12T15:59:24.032Z [info] : user01@email.com -> /posts/listOwn
+2022-05-12T15:59:27.961Z [info] : user01@email.com -> /posts/listOwn/?page=2
+2022-05-12T15:59:29.831Z [info] : user01@email.com -> /posts/listOwn/?page=1
+2022-05-12T16:01:07.403Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:01:08.632Z [info] : user07@email.com has logged in
+2022-05-12T16:01:08.636Z [info] : user07@email.com -> /users/list
+2022-05-12T16:01:09.291Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:01:09.883Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:01:10.034Z [info] : user07@email.com has created a new post: [627d2f45c6a8c3e157531186]
+2022-05-12T16:01:10.037Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:01:10.567Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:02:18.079Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:02:19.392Z [info] : user07@email.com has logged in
+2022-05-12T16:02:19.395Z [info] : user07@email.com -> /users/list
+2022-05-12T16:02:19.980Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:05:02.358Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:05:03.674Z [info] : user07@email.com has logged in
+2022-05-12T16:05:03.677Z [info] : user07@email.com -> /users/list
+2022-05-12T16:05:04.262Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:06:49.534Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:06:50.801Z [info] : user07@email.com has logged in
+2022-05-12T16:06:50.804Z [info] : user07@email.com -> /users/list
+2022-05-12T16:06:51.391Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:07:29.334Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:07:30.601Z [info] : user07@email.com has logged in
+2022-05-12T16:07:30.604Z [info] : user07@email.com -> /users/list
+2022-05-12T16:07:31.188Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:07:55.439Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:07:56.743Z [info] : user01@email.com has logged in
+2022-05-12T16:07:56.746Z [info] : user01@email.com -> /users/list
+2022-05-12T16:07:57.070Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:07:57.363Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:07:57.407Z [error] : u.equals is not a function
+2022-05-12T16:08:24.018Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:08:25.213Z [info] : user01@email.com has logged in
+2022-05-12T16:08:25.215Z [info] : user01@email.com -> /users/list
+2022-05-12T16:08:25.537Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:08:25.831Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:08:25.874Z [error] : u.equals is not a function
+2022-05-12T16:08:49.936Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:08:54.499Z [info] : user01@email.com has logged in
+2022-05-12T16:08:54.505Z [info] : user01@email.com -> /users/list
+2022-05-12T16:08:56.227Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:08:57.956Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:08:57.999Z [error] : u.equals is not a function
+2022-05-12T16:09:50.739Z [info] : user01@email.com has logged in
+2022-05-12T16:09:50.748Z [info] : user01@email.com -> /users/list
+2022-05-12T16:09:52.085Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:09:53.086Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:10:14.539Z [info] : user01@email.com has logged in
+2022-05-12T16:10:14.546Z [info] : user01@email.com -> /users/list
+2022-05-12T16:10:16.438Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:10:17.399Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:10:52.069Z [info] : user01@email.com has logged in
+2022-05-12T16:10:52.077Z [info] : user01@email.com -> /users/list
+2022-05-12T16:10:56.882Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:10:57.747Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:10:57.973Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:12:35.102Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:12:38.576Z [info] : user01@email.com has logged in
+2022-05-12T16:12:38.582Z [info] : user01@email.com -> /users/list
+2022-05-12T16:12:43.592Z [info] : user01@email.com -> /posts/listOwn
+2022-05-12T16:12:58.800Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:13:03.039Z [info] : created user: test01@email.com
+2022-05-12T16:13:21.911Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:13:22.465Z [info] : created user: test01@email.com
+2022-05-12T16:13:29.016Z [info] : admin@email.com has logged in
+2022-05-12T16:13:29.019Z [info] : admin@email.com -> /list
+2022-05-12T16:13:31.295Z [info] : user01@email.com has logged in
+2022-05-12T16:13:31.299Z [info] : user01@email.com -> /users/list
+2022-05-12T16:13:44.031Z [info] : user01@email.com has logged in
+2022-05-12T16:13:44.036Z [info] : user01@email.com -> /users/list
+2022-05-12T16:13:49.710Z [info] : admin@email.com has logged in
+2022-05-12T16:13:49.713Z [info] : admin@email.com -> /list
+2022-05-12T16:13:50.938Z [info] : admin@email.com -> /list
+2022-05-12T16:13:56.055Z [info] : created user: aaaaatest@email.com
+2022-05-12T16:13:58.102Z [info] : admin@email.com has logged in
+2022-05-12T16:13:58.105Z [info] : admin@email.com -> /list
+2022-05-12T16:13:59.410Z [info] : admin@email.com -> /delete
+2022-05-12T16:13:59.653Z [info] : admin@email.com -> /list
+2022-05-12T16:14:04.704Z [info] : created user: user09999@email.com
+2022-05-12T16:14:06.758Z [info] : admin@email.com has logged in
+2022-05-12T16:14:06.760Z [info] : admin@email.com -> /list
+2022-05-12T16:14:08.039Z [info] : admin@email.com -> /delete
+2022-05-12T16:14:08.283Z [info] : admin@email.com -> /list
+2022-05-12T16:14:11.965Z [info] : created user: aaaaaatest@email.com
+2022-05-12T16:14:13.596Z [info] : created user: aaaaaaatest@email.com
+2022-05-12T16:14:15.241Z [info] : created user: aaaaaaaatest@email.com
+2022-05-12T16:14:16.063Z [info] : admin@email.com has logged in
+2022-05-12T16:14:16.067Z [info] : admin@email.com -> /list
+2022-05-12T16:14:17.093Z [info] : admin@email.com -> /delete
+2022-05-12T16:14:17.821Z [info] : admin@email.com -> /list
+2022-05-12T16:14:19.040Z [info] : user01@email.com has logged in
+2022-05-12T16:14:19.042Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:19.411Z [info] : user01@email.com -> /users/list/?page=2
+2022-05-12T16:14:19.737Z [info] : user01@email.com -> /users/list/?page=3
+2022-05-12T16:14:20.950Z [info] : user01@email.com has logged in
+2022-05-12T16:14:20.955Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:21.279Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:21.559Z [info] : user01@email.com -> /users/list?search=
+2022-05-12T16:14:21.888Z [info] : user01@email.com -> /users/list/?page=2&search=
+2022-05-12T16:14:22.213Z [info] : user01@email.com -> /users/list/?page=3&search=
+2022-05-12T16:14:23.617Z [info] : user01@email.com has logged in
+2022-05-12T16:14:23.619Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:23.963Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:24.507Z [info] : user01@email.com -> /users/list?search=usuarionoexistente
+2022-05-12T16:14:25.818Z [info] : user01@email.com has logged in
+2022-05-12T16:14:25.823Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:26.144Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:26.698Z [info] : user01@email.com -> /users/list?search=al
+2022-05-12T16:14:28.850Z [info] : created user: atest01@email.com
+2022-05-12T16:14:30.548Z [info] : created user: atest02@email.com
+2022-05-12T16:14:31.369Z [info] : atest01@email.com has logged in
+2022-05-12T16:14:31.373Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:31.758Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T16:14:31.974Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T16:14:31.976Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:33.143Z [info] : atest02@email.com has logged in
+2022-05-12T16:14:33.145Z [info] : atest02@email.com -> /users/list
+2022-05-12T16:14:33.469Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:14:33.785Z [info] : atest02@email.com -> /users/requests/list/decline/627d3267473f04c8a9dd4507
+2022-05-12T16:14:33.932Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T16:14:33.934Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:14:35.762Z [info] : created user: atest01@email.com
+2022-05-12T16:14:37.381Z [info] : created user: atest02@email.com
+2022-05-12T16:14:38.218Z [info] : atest01@email.com has logged in
+2022-05-12T16:14:38.220Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:38.591Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T16:14:38.783Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T16:14:38.786Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:39.979Z [info] : atest02@email.com has logged in
+2022-05-12T16:14:39.981Z [info] : atest02@email.com -> /users/list
+2022-05-12T16:14:40.318Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:14:40.616Z [info] : atest02@email.com -> /users/requests/list/decline/627d326e473f04c8a9dd4526
+2022-05-12T16:14:40.762Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T16:14:40.764Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:14:42.594Z [info] : created user: atest01@email.com
+2022-05-12T16:14:43.418Z [info] : user01@email.com has logged in
+2022-05-12T16:14:43.421Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:43.743Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:14:43.937Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:14:43.939Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:45.094Z [info] : user02@email.com has logged in
+2022-05-12T16:14:45.096Z [info] : user02@email.com -> /users/list
+2022-05-12T16:14:45.421Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:14:45.613Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:14:45.616Z [info] : user02@email.com -> /users/list
+2022-05-12T16:14:46.778Z [info] : atest01@email.com has logged in
+2022-05-12T16:14:46.780Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:47.105Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:14:49.257Z [info] : created user: atest01@email.com
+2022-05-12T16:14:50.072Z [info] : user01@email.com has logged in
+2022-05-12T16:14:50.074Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:50.406Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:14:50.600Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:14:50.602Z [info] : user01@email.com -> /users/list
+2022-05-12T16:14:51.755Z [info] : user02@email.com has logged in
+2022-05-12T16:14:51.758Z [info] : user02@email.com -> /users/list
+2022-05-12T16:14:52.081Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:14:52.275Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:14:52.277Z [info] : user02@email.com -> /users/list
+2022-05-12T16:14:53.437Z [info] : atest01@email.com has logged in
+2022-05-12T16:14:53.439Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:14:53.768Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:14:54.093Z [info] : atest01@email.com -> /users/requests/list/accept/627d327a473f04c8a9dd456a
+2022-05-12T16:14:54.388Z [info] : atest01@email.com has accepted a friendship request from: [user01@email.com]
+2022-05-12T16:14:54.390Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:14:55.691Z [info] : user07@email.com has logged in
+2022-05-12T16:14:55.694Z [info] : user07@email.com -> /users/list
+2022-05-12T16:14:56.014Z [info] : user07@email.com -> /friends/627637f92af1c3c02e64f55d
+2022-05-12T16:14:57.324Z [info] : user07@email.com has logged in
+2022-05-12T16:14:57.328Z [info] : user07@email.com -> /users/list
+2022-05-12T16:14:57.976Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:14:58.565Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:14:58.719Z [info] : user07@email.com has created a new post: [627d3282473f04c8a9dd459c]
+2022-05-12T16:14:58.722Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:14:59.231Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:15:00.868Z [info] : user07@email.com has logged in
+2022-05-12T16:15:00.870Z [info] : user07@email.com -> /users/list
+2022-05-12T16:15:01.469Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:15:03.449Z [info] : user07@email.com has logged in
+2022-05-12T16:15:03.451Z [info] : user07@email.com -> /users/list
+2022-05-12T16:15:04.037Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:15:05.421Z [info] : user01@email.com has logged in
+2022-05-12T16:15:05.423Z [info] : user01@email.com -> /users/list
+2022-05-12T16:15:05.746Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:15:06.027Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:15:07.462Z [info] : user01@email.com has logged in
+2022-05-12T16:15:07.466Z [info] : user01@email.com -> /users/list
+2022-05-12T16:15:07.735Z [info] : user01@email.com -> /posts/list/randomuser@email.com
+2022-05-12T16:15:10.344Z [info] : created user: test@email.com
+2022-05-12T16:17:29.195Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:17:31.284Z [info] : created user: test01@email.com
+2022-05-12T16:17:40.072Z [info] : created user: test01@email.com
+2022-05-12T16:17:42.635Z [info] : admin@email.com has logged in
+2022-05-12T16:17:42.637Z [info] : admin@email.com -> /list
+2022-05-12T16:17:43.663Z [info] : user01@email.com has logged in
+2022-05-12T16:17:43.666Z [info] : user01@email.com -> /users/list
+2022-05-12T16:17:48.800Z [info] : user01@email.com has logged in
+2022-05-12T16:17:48.804Z [info] : user01@email.com -> /users/list
+2022-05-12T16:17:52.409Z [info] : admin@email.com has logged in
+2022-05-12T16:17:52.414Z [info] : admin@email.com -> /list
+2022-05-12T16:17:52.863Z [info] : admin@email.com -> /list
+2022-05-12T16:17:54.917Z [info] : created user: aaaaatest@email.com
+2022-05-12T16:17:55.737Z [info] : admin@email.com has logged in
+2022-05-12T16:17:55.739Z [info] : admin@email.com -> /list
+2022-05-12T16:17:56.234Z [info] : admin@email.com -> /delete
+2022-05-12T16:17:56.459Z [info] : admin@email.com -> /list
+2022-05-12T16:17:58.458Z [info] : created user: user09999@email.com
+2022-05-12T16:17:59.279Z [info] : admin@email.com has logged in
+2022-05-12T16:17:59.282Z [info] : admin@email.com -> /list
+2022-05-12T16:17:59.776Z [info] : admin@email.com -> /delete
+2022-05-12T16:18:00.000Z [info] : admin@email.com -> /list
+2022-05-12T16:18:02.010Z [info] : created user: aaaaaatest@email.com
+2022-05-12T16:18:03.627Z [info] : created user: aaaaaaatest@email.com
+2022-05-12T16:18:05.251Z [info] : created user: aaaaaaaatest@email.com
+2022-05-12T16:18:06.069Z [info] : admin@email.com has logged in
+2022-05-12T16:18:06.071Z [info] : admin@email.com -> /list
+2022-05-12T16:18:07.088Z [info] : admin@email.com -> /delete
+2022-05-12T16:18:07.765Z [info] : admin@email.com -> /list
+2022-05-12T16:18:08.975Z [info] : user01@email.com has logged in
+2022-05-12T16:18:08.977Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:09.334Z [info] : user01@email.com -> /users/list/?page=2
+2022-05-12T16:18:09.647Z [info] : user01@email.com -> /users/list/?page=3
+2022-05-12T16:18:10.843Z [info] : user01@email.com has logged in
+2022-05-12T16:18:10.847Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:11.155Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:11.420Z [info] : user01@email.com -> /users/list?search=
+2022-05-12T16:18:11.727Z [info] : user01@email.com -> /users/list/?page=2&search=
+2022-05-12T16:18:12.039Z [info] : user01@email.com -> /users/list/?page=3&search=
+2022-05-12T16:18:13.423Z [info] : user01@email.com has logged in
+2022-05-12T16:18:13.425Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:13.738Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:14.263Z [info] : user01@email.com -> /users/list?search=usuarionoexistente
+2022-05-12T16:18:15.581Z [info] : user01@email.com has logged in
+2022-05-12T16:18:15.583Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:15.894Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:16.423Z [info] : user01@email.com -> /users/list?search=al
+2022-05-12T16:18:18.537Z [info] : created user: atest01@email.com
+2022-05-12T16:18:20.160Z [info] : created user: atest02@email.com
+2022-05-12T16:18:20.983Z [info] : atest01@email.com has logged in
+2022-05-12T16:18:20.985Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:21.344Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T16:18:21.527Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T16:18:21.529Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:22.664Z [info] : atest02@email.com has logged in
+2022-05-12T16:18:22.667Z [info] : atest02@email.com -> /users/list
+2022-05-12T16:18:22.978Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:18:23.244Z [info] : atest02@email.com -> /users/requests/list/decline/627d334d473f04c8a9dd46d7
+2022-05-12T16:18:23.380Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T16:18:23.382Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:18:25.192Z [info] : created user: atest01@email.com
+2022-05-12T16:18:26.811Z [info] : created user: atest02@email.com
+2022-05-12T16:18:28.068Z [info] : atest01@email.com has logged in
+2022-05-12T16:18:28.070Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:28.425Z [info] : atest01@email.com -> /users/list/send/atest02@email.com
+2022-05-12T16:18:28.605Z [info] : atest01@email.com has sent a friendship request to: [atest02@email.com]
+2022-05-12T16:18:28.607Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:29.793Z [info] : atest02@email.com has logged in
+2022-05-12T16:18:29.795Z [info] : atest02@email.com -> /users/list
+2022-05-12T16:18:30.107Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:18:30.372Z [info] : atest02@email.com -> /users/requests/list/decline/627d3354473f04c8a9dd46f6
+2022-05-12T16:18:30.509Z [info] : atest02@email.com has declined a friendship request from: [atest01@email.com]
+2022-05-12T16:18:30.511Z [info] : atest02@email.com -> /users/requests/list
+2022-05-12T16:18:32.324Z [info] : created user: atest01@email.com
+2022-05-12T16:18:33.153Z [info] : user01@email.com has logged in
+2022-05-12T16:18:33.155Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:33.467Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:18:33.647Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:18:33.650Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:34.787Z [info] : user02@email.com has logged in
+2022-05-12T16:18:34.789Z [info] : user02@email.com -> /users/list
+2022-05-12T16:18:35.103Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:18:35.292Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:18:35.294Z [info] : user02@email.com -> /users/list
+2022-05-12T16:18:36.435Z [info] : atest01@email.com has logged in
+2022-05-12T16:18:36.436Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:36.750Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:18:38.889Z [info] : created user: atest01@email.com
+2022-05-12T16:18:39.701Z [info] : user01@email.com has logged in
+2022-05-12T16:18:39.703Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:40.014Z [info] : user01@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:18:40.194Z [info] : user01@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:18:40.197Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:41.334Z [info] : user02@email.com has logged in
+2022-05-12T16:18:41.336Z [info] : user02@email.com -> /users/list
+2022-05-12T16:18:41.643Z [info] : user02@email.com -> /users/list/send/atest01@email.com
+2022-05-12T16:18:41.824Z [info] : user02@email.com has sent a friendship request to: [atest01@email.com]
+2022-05-12T16:18:41.826Z [info] : user02@email.com -> /users/list
+2022-05-12T16:18:42.963Z [info] : atest01@email.com has logged in
+2022-05-12T16:18:42.965Z [info] : atest01@email.com -> /users/list
+2022-05-12T16:18:43.282Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:18:43.593Z [info] : atest01@email.com -> /users/requests/list/accept/627d3360473f04c8a9dd473a
+2022-05-12T16:18:43.877Z [info] : atest01@email.com has accepted a friendship request from: [user01@email.com]
+2022-05-12T16:18:43.880Z [info] : atest01@email.com -> /users/requests/list
+2022-05-12T16:18:45.171Z [info] : user07@email.com has logged in
+2022-05-12T16:18:45.174Z [info] : user07@email.com -> /users/list
+2022-05-12T16:18:45.484Z [info] : user07@email.com -> /friends/627637f92af1c3c02e64f55d
+2022-05-12T16:18:46.750Z [info] : user07@email.com has logged in
+2022-05-12T16:18:46.754Z [info] : user07@email.com -> /users/list
+2022-05-12T16:18:47.378Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:18:47.969Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:18:48.109Z [info] : user07@email.com has created a new post: [627d3367473f04c8a9dd476c]
+2022-05-12T16:18:48.111Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:18:48.601Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:18:50.185Z [info] : user07@email.com has logged in
+2022-05-12T16:18:50.188Z [info] : user07@email.com -> /users/list
+2022-05-12T16:18:50.764Z [info] : user07@email.com -> /posts/add
+2022-05-12T16:18:52.752Z [info] : user07@email.com has logged in
+2022-05-12T16:18:52.754Z [info] : user07@email.com -> /users/list
+2022-05-12T16:18:53.329Z [info] : user07@email.com -> /posts/listOwn
+2022-05-12T16:18:54.696Z [info] : user01@email.com has logged in
+2022-05-12T16:18:54.698Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:55.009Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-12T16:18:55.271Z [info] : user01@email.com -> /posts/list/user02@email.com
+2022-05-12T16:18:56.702Z [info] : user01@email.com has logged in
+2022-05-12T16:18:56.706Z [info] : user01@email.com -> /users/list
+2022-05-12T16:18:56.977Z [info] : user01@email.com -> /posts/list/randomuser@email.com
+2022-05-12T16:18:59.575Z [info] : created user: test@email.com
+2022-05-12T16:19:00.418Z [info] : test@email.com has logged in
+2022-05-12T16:19:00.420Z [info] : test@email.com -> /users/list
+2022-05-12T16:19:00.691Z [info] : test@email.com -> /friends/3231231
