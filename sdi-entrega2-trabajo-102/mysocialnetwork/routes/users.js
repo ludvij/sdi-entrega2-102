@@ -5,7 +5,10 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         if (req.session.user == null) {
             res.render("signup.twig", {user: req.session.user});
         } else {
-            res.redirect("/");
+			if (req.session.user.role === "ROLE_ADMIN")
+				return res.redirect('/admin/list')
+			else
+				return res.redirect('/users/list')
         }
     });
     app.post('/signup', async (req, res) => {
@@ -36,7 +39,13 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 				}
 			}
 
-        }
+        }else {
+			if (req.session.user.role === "ROLE_ADMIN")
+				return res.redirect('/admin/list')
+			else
+				return res.redirect('/users/list')
+
+		}
     });
     app.get('/login', (req, res) => {
         if (req.session.user == null) {
@@ -245,7 +254,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 
 		// not friends
 		if(!senderUser.friends.includes(receiverUser)){
-			// check there are not requests arlready sent
+			// check there are not requests already sent
 			let filter = {
 				$or : [
 					{$and : [{receiver: senderUser},{sender: receiverUser}]},

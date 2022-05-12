@@ -28,6 +28,8 @@
                 token = response.token;
                 Cookies.set('token', response.token);
                 $("#main-container").load("widget-friendList.html");
+                $("#barra-menu").append("<li><a onclick='listaAmigos()'>Amigos</a></li>")
+                $("#barra-menu-derecha").append("<li><a onclick='logout()'>Logout</a></li>")
             },
             error: function (error){
                 $("#widget-login")

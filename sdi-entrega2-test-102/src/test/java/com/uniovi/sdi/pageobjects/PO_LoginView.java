@@ -1,5 +1,6 @@
 package com.uniovi.sdi.pageobjects;
 
+import com.uniovi.sdi.util.SeleniumUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -52,6 +53,7 @@ public class PO_LoginView extends PO_NavView {
 	}
 
 	public static void loginAsApi(WebDriver driver, String emailp, String passwordp) {
+		SeleniumUtils.waitLoadElementsBy(driver, "text", "Email:", PO_View.getTimeout());
 		//Rellenamos el formulario.
 		fillFormApi(driver, emailp, passwordp);
 		String text = "Nombre";
