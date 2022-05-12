@@ -528,13 +528,16 @@ class SdiEntrega2102ApplicationTests {
     // aceptar invitación y mostrar que desaparece
     public void PR22() {
         PO_SignUpView.signUpAs(driver, "atest01@email.com", "atest01", "test", "atest");
-        PO_LoginView.loginAs(driver, "user01@email.com", "user01");
+        PO_SignUpView.signUpAs(driver, "atest02@email.com", "atest02", "test", "atest");
+        PO_SignUpView.signUpAs(driver, "atest03@email.com", "atest03", "test", "atest");
+
+        PO_LoginView.loginAs(driver, "atest02@email.com", "atest02");
         // Le enviamos la solicitud
         List<WebElement> sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         sendList.get(0).click();
 
         PO_HomeView.logout(driver);
-        PO_LoginView.loginAs(driver, "user02@email.com", "user02");
+        PO_LoginView.loginAs(driver, "atest03@email.com", "atest03");
 
         sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         sendList.get(0).click();
