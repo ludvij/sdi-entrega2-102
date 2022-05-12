@@ -9,7 +9,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.uniovi.sdi.pageobjects.*;
 import com.uniovi.sdi.util.SeleniumUtils;
-import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -21,9 +20,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 //Ordenamos las pruebas por la anotación @Order de cada método
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,7 +39,6 @@ class SdiEntrega2102ApplicationTests {
     private static MongoClient client;
     private static MongoDatabase database;
     private static MongoCollection<Document> doc;
-    private static MongoCollection<Document> friendshiprequesets;
     private static MongoCollection<Document> postDocument;
     private static MongoCollection<Document> messageDocument;
 
@@ -66,7 +62,6 @@ class SdiEntrega2102ApplicationTests {
             client = MongoClients.create("mongodb+srv://admin:admin@sdibook.1ld9m.mongodb.net/sdibook?retryWrites=true&w=majority");
             database = client.getDatabase("sdibook");
             doc = database.getCollection("users");
-            friendshiprequesets = database.getCollection("friendshiprequests");
             postDocument = database.getCollection("posts");
             messageDocument = database.getCollection("messages");
         } catch (MongoException me) {
@@ -80,7 +75,7 @@ class SdiEntrega2102ApplicationTests {
     static public void end() {
         //Cerramos el navegador al finalizar las pruebas
         Bson query = eq("name", "test");
-        var res = doc.deleteMany(query);
+        doc.deleteMany(query);
 
         for (ObjectId postId : newPostIds) {
             postDocument.deleteMany(eq("_id", postId));
@@ -97,7 +92,7 @@ class SdiEntrega2102ApplicationTests {
         driver.navigate().to(URL);
         // cleanup
         Bson query = eq("name", "test");
-        var res = doc.deleteMany(query);
+        doc.deleteMany(query);
 
         for (ObjectId postId : newPostIds) {
             postDocument.deleteMany(eq("_id", postId));
@@ -431,10 +426,6 @@ class SdiEntrega2102ApplicationTests {
         PO_SignUpView.signUpAs(driver, "atest02@email.com", "test02", "test", "test");
         PO_LoginView.loginAs(driver, "atest01@email.com", "test01");
 
-        // Obtenemos cada una de las filas
-        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
-                , PO_View.getTimeout());
-
         // Enviamos la solicitud al primer usuario
         List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
         elements.get(0).click();
@@ -466,10 +457,6 @@ class SdiEntrega2102ApplicationTests {
         PO_SignUpView.signUpAs(driver, "atest01@email.com", "test01", "test", "test");
         PO_SignUpView.signUpAs(driver, "atest02@email.com", "test02", "test", "test");
         PO_LoginView.loginAs(driver, "atest01@email.com", "test01");
-
-        // Obtenemos cada una de las filas
-        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr"
-                , PO_View.getTimeout());
 
         // Le enviamos la solicitud al primero
         List<WebElement> sendList = PO_View.checkElementBy(driver, "free", "//*[@id=\"cuerpo\"]/tr[1]/td[4]/a");
@@ -650,7 +637,6 @@ class SdiEntrega2102ApplicationTests {
         elements = PO_View.checkElementBy(driver, "free", "//a[@id=\"myposts_list\"]");
         elements.get(0).click();
 
-        Document self = doc.find(eq("email", posterUserCredentials[0])).first();
         //solo tenemos uno
         List<WebElement> posts = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
         Assertions.assertEquals(5, posts.size());
@@ -780,7 +766,7 @@ class SdiEntrega2102ApplicationTests {
     @Order(35)
     // Acceder a la lista de amigos de un usuario, y realizar un filtrado para encontrar a un amigo concreto, el nombre
     // a buscar debe coincidir con el de un amigo
-    public void PR35() throws InterruptedException {
+    public void PR35() {
         driver.navigate().to(URL_jQuery);
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
 
@@ -869,7 +855,7 @@ class SdiEntrega2102ApplicationTests {
     // Identificarse en la aplicación y enviar un mensaje a un amigo. Validar que el mensaje enviado aparece en el
     // chat. Identificarse después con el usuario que recibió el mensaje y validar que tiene un mensaje sin leer.
     // Entrar en el chat y comprobar que el mensaje pasa a tener el estado leído.
-    public void PR38() throws InterruptedException {
+    public void PR38() {
         driver.navigate().to(URL_jQuery);
         PO_LoginView.loginAsApi(driver, "user01@email.com", "user01");
 
