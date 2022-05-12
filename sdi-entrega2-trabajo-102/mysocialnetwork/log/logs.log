@@ -499,3 +499,7 @@
 2022-05-12T16:19:00.418Z [info] : test@email.com has logged in
 2022-05-12T16:19:00.420Z [info] : test@email.com -> /users/list
 2022-05-12T16:19:00.691Z [info] : test@email.com -> /friends/3231231
+2022-05-12T16:25:53.533Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:26:27.964Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T16:26:44.802Z [error] : Se ha producido un error: NotFoundError: Not Found
+2022-05-12T20:53:29.891Z [error] : Se ha producido un error: NotFoundError: Not Found

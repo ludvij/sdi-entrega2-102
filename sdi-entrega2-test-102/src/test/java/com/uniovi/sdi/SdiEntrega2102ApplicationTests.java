@@ -707,7 +707,7 @@ class SdiEntrega2102ApplicationTests {
     @Test
     @Order(29)
     public void PR29() {
-        driver.navigate().to(URL + "/users/login");
+        driver.navigate().to(URL + "/users/list");
         String text = "Identificación de usuario";
         List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", text);
         Assertions.assertEquals(text, result.get(0).getText());
