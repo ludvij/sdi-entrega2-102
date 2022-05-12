@@ -30,7 +30,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 				return res.redirect("/login" + '?message=Nuevo usuario registrado. Inicie la sesión.' +
 					"&messageType=alert-info");
 			} catch (err) {
-				if (err.code == 11000) {
+				if (err.code === 11000) {
 					return res.redirect("/signup" + '?message=Se ha producido un error al registrar el usuario: Usuario ya existente.'+
 						'&messageType=alert-danger');
 				} else {
@@ -83,7 +83,8 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 				}
 			} catch (error) {
 				logger.error(error)
-				res.status(500).send(error)
+				res.status(500)
+				res.render("error.twig", {message: "Se ha producido un error", user: req.session.user, error: error})
 			}
         }
 		else {
@@ -149,7 +150,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		let requests = await friendshipRequestRepository.getFriendshipRequests(filter, {})
 		let friendshipRequest = [];
 		requests.forEach((recu) => {
-            if(recu.sender.toString() != req.session.user._id){
+            if(recu.sender.toString() !== req.session.user._id){
                 friendshipRequest.push(recu.sender.toString())
             }else {
                 friendshipRequest.push(recu.receiver.toString())
@@ -158,9 +159,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         req.session.user.friends.forEach((fr) => {
             friendshipRequest.push(fr.toString());
         })
-		var users2 = [];
+		let users2 = [];
 
-		for (var i = 0; i < users.length; i++){
+		for (let i = 0; i < users.length; i++){
 			let aux = JSON.stringify(users[i])
 			let json = JSON.parse(aux)
 			users2.push(json)
@@ -235,8 +236,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		if (!fr) 
 			return res.redirect('/users/requests/list');
 		// check the user declining is the user receiving the request
-		if (fr.receiver != req.session.user._id) {
-			return res.status(401).send('not your friendship request')
+		if (!fr.receiver.equals(req.session.user._id)) {
+			res.render("error.twig", {message: "No te pertenece esta petición de amistad", user: req.session.user})
+			return
 		}
 		await friendshipRequestRepository.deleteFriendshipRequest(req.params.id)
 
@@ -263,7 +265,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			};
 			let options = {};
 			let frienshipRequests = await friendshipRequestRepository.getFriendshipRequests(filter, options)
-			if(frienshipRequests.length == 0){
+			if(frienshipRequests.length === 0){
 				await friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser)
 				// LOGS
 				logger.info(`${req.session.user.email} has sent a friendship request to: [${receiverUser.email}]`)
@@ -300,7 +302,8 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			res.render("users/friends.twig", response);
 
 		} catch (error) {
-			res.send("Se ha producido un error al listar a los amigos " + error)
+			res.status(500)
+			res.render("error.twig", {message: "Se ha producido un error al listar a los amigos", user: req.session.user, error: error})
 		}
     })
 }

@@ -38,7 +38,9 @@ module.exports = {
         return await User.findById(id, options);
     },
 	deleteUser: async (email) => {
-		let user = await User.find({email: email})
+		let user = await User.findOne({email: email})
+		if(user == null)
+			return;
 		// delete posts
 		await Post.deleteMany({_id: {$in: user.posts}})
 		// delete requests
@@ -54,12 +56,13 @@ module.exports = {
 			friend.friends.splice(idx, 1)
 			await friend.save()
 		}
-		await User.deleteOne({_id: user._id})
+		await user.deleteOne({email: email});
     }, 
 	deleteUsers: async (emails) => {
 		for (let email of emails) {
-
-			let user = await User.find({email: email})
+			let user = await User.findOne({email: email})
+			if(user == null)
+				continue;
 			// delete posts
 			await Post.deleteMany({_id: {$in: user.posts}})
 			// delete requests
@@ -75,7 +78,7 @@ module.exports = {
 				friend.friends.splice(idx, 1)
 				await friend.save()
 			}
-			await User.deleteOne({_id: user._id})
+			await user.deleteOne({email: email})
 		}
     }, 
 	setFriendship: async (receiver, sender) => {

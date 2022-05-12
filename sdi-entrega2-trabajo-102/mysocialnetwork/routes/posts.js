@@ -70,6 +70,7 @@ module.exports = function(app, usersRepository, postsRepository) {
 			})
 
 			if(!friends){
+				res.status(403)
 				res.render("error.twig", {message: "No puedes ver las publicaciones de esa persona", user: req.session.user})
 			}else {
 				let filter = {owner: user._id};
@@ -101,7 +102,8 @@ module.exports = function(app, usersRepository, postsRepository) {
 			}
 		} catch(error) {
 			logger.warn(error)
-			res.status(500).send(error)
+			res.status(500)
+			res.render("error.twig", {message: "Se ha producido un error", user: req.session.user, error: error})
 		}
 	});
 
