@@ -21,15 +21,19 @@
     window.history.pushState("","","/apiclient/client.html?w=friendList");
     let friends;
     var friendId;
-    var friendName;
     var messages;
     var friendsWithDate = [];
     var promises = [];
+    var isFiltering = false;
+    let filterValue;
     $('#filter-by-name').on('input',function(e){
         let filteredFriends = [];
-        let filterValue = $("#filter-by-name").val();
-        filteredFriends = friends.filter(f => f.name.includes(filterValue));
-        updateFriendList(filteredFriends);
+        filterValue = $("#filter-by-name").val();
+        if(filterValue == "")
+            isFiltering = false;
+        else
+            isFiltering = true;
+        //filteredFriends = friends.filter(f => f.name.includes(filterValue));
     });
 
     function loadFriends() {
@@ -50,7 +54,36 @@
             }
         }))
 
+
+    }
+
+    function updateFriendList(friendList) {
+        $("#friendListBody").empty();
+        friendList.forEach((f) => {
+            promises.push($.ajax({
+                url: URLbase + "/conversation/" + f._id,
+                type: "GET",
+                data: {},
+                dataType: "json",
+                headers: {"token": token},
+                success: function (response) {
+                    messages = response;
+                    let value = {};
+                    value.f = f;
+                    value.messages = messages;
+                    friendsWithDate.push(value);
+                },
+                error: function(error) {
+                    $("#main-container").load("widget-login.html");
+                }
+            }))
+
+        });
+
         Promise.allSettled(promises).then(() => {
+            if(isFiltering){
+                friendsWithDate = friendsWithDate.filter(value => value.f.name == filterValue);
+            }
             friendsWithDate.sort(function(a,b) {
                 if(a.messages.length == 0)
                     return 1;
@@ -66,31 +99,6 @@
                 setFriendList(value.messages, value.f)
             })
             friendsWithDate = [];
-        });
-    }
-
-    function updateFriendList(friends) {
-        $("#friendListBody").empty();
-        friends.forEach((f) => {
-            promises.push($.ajax({
-                url: URLbase + "/conversation/" + f._id,
-                type: "GET",
-                data: {},
-                dataType: "json",
-                headers: {"token": token},
-                success: function (response) {
-                    messages = response;
-                    let value = {};
-                    value.f = f;
-                    value.messages = messages;
-                    friendsWithDate.push(value);
-                    //setFriendList(messages, f)
-                },
-                error: function(error) {
-                    $("#main-container").load("widget-login.html");
-                }
-            }))
-
         });
     }
 

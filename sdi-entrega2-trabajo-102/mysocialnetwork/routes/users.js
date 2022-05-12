@@ -1,9 +1,14 @@
+const logger = require('../logger')
+
 module.exports = function (app, usersRepository, friendshipRequestRepository) {
     app.get('/signup', (req, res) => {
         if (req.session.user == null) {
             res.render("signup.twig", {user: req.session.user});
         } else {
-            res.redirect("/");
+			if (req.session.user.role === "ROLE_ADMIN")
+				return res.redirect('/admin/list')
+			else
+				return res.redirect('/users/list')
         }
     });
     app.post('/signup', async (req, res) => {
@@ -18,11 +23,14 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					"&messageType=alert-danger");
 			}
 			try {
-				await usersRepository.createUser(req.body, securePassword)
+				let user = await usersRepository.createUser(req.body, securePassword)
+				// LOGS
+				logger.info('created user: ' + user.email)
+				// !LOGS
 				return res.redirect("/login" + '?message=Nuevo usuario registrado. Inicie la sesión.' +
 					"&messageType=alert-info");
 			} catch (err) {
-				if (err.code == 11000) {
+				if (err.code === 11000) {
 					return res.redirect("/signup" + '?message=Se ha producido un error al registrar el usuario: Usuario ya existente.'+
 						'&messageType=alert-danger');
 				} else {
@@ -31,7 +39,13 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 				}
 			}
 
-        }
+        }else {
+			if (req.session.user.role === "ROLE_ADMIN")
+				return res.redirect('/admin/list')
+			else
+				return res.redirect('/users/list')
+
+		}
     });
     app.get('/login', (req, res) => {
         if (req.session.user == null) {
@@ -58,7 +72,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					return res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
 				} else {
 					req.session.user = user;
-					console.log("logged in as " + user.name + "(" + user.email + ")");
+					// LOGS
+					logger.info(user.email + ' has logged in')
+					// !LOGS
 					if (user.role === "ROLE_ADMIN") {
 						return res.redirect("/admin/list");
 					} else {
@@ -66,8 +82,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					}
 				}
 			} catch (error) {
-				console.log(error)
-				res.status(500).send(error)
+				logger.error(error)
+				res.status(500)
+				res.render("error.twig", {message: "Se ha producido un error", user: req.session.user, error: error})
 			}
         }
 		else {
@@ -133,7 +150,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		let requests = await friendshipRequestRepository.getFriendshipRequests(filter, {})
 		let friendshipRequest = [];
 		requests.forEach((recu) => {
-            if(recu.sender.toString() != req.session.user._id){
+            if(recu.sender.toString() !== req.session.user._id){
                 friendshipRequest.push(recu.sender.toString())
             }else {
                 friendshipRequest.push(recu.receiver.toString())
@@ -142,9 +159,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
         req.session.user.friends.forEach((fr) => {
             friendshipRequest.push(fr.toString());
         })
-		var users2 = [];
+		let users2 = [];
 
-		for (var i = 0; i < users.length; i++){
+		for (let i = 0; i < users.length; i++){
 			let aux = JSON.stringify(users[i])
 			let json = JSON.parse(aux)
 			users2.push(json)
@@ -207,6 +224,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
 			await usersRepository.setFriendship(receiver, sender);
 			await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
+			// LOGS
+			logger.info(`${req.session.user.email} has accepted a friendship request from: [${sender.email}]`)
+			// !LOGS
 		}
 		res.redirect('/users/requests/list');
 	})
@@ -216,10 +236,16 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		if (!fr) 
 			return res.redirect('/users/requests/list');
 		// check the user declining is the user receiving the request
-		if (fr.receiver != req.session.user._id) {
-			return res.status(401).send('not your friendship request')
+		if (!fr.receiver.equals(req.session.user._id)) {
+			res.render("error.twig", {message: "No te pertenece esta petición de amistad", user: req.session.user})
+			return
 		}
 		await friendshipRequestRepository.deleteFriendshipRequest(req.params.id)
+
+		let {email} = await usersRepository.findUser({_id: fr.sender}, "email")
+		// LOGS
+		logger.info(`${req.session.user.email} has declined a friendship request from: [${email}]`)
+		// !LOGS
 		res.redirect('/users/requests/list');
 
     });
@@ -230,7 +256,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 
 		// not friends
 		if(!senderUser.friends.includes(receiverUser)){
-			// check there are not requests arlready sent
+			// check there are not requests already sent
 			let filter = {
 				$or : [
 					{$and : [{receiver: senderUser},{sender: receiverUser}]},
@@ -239,8 +265,11 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			};
 			let options = {};
 			let frienshipRequests = await friendshipRequestRepository.getFriendshipRequests(filter, options)
-			if(frienshipRequests.length == 0){
+			if(frienshipRequests.length === 0){
 				await friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser)
+				// LOGS
+				logger.info(`${req.session.user.email} has sent a friendship request to: [${receiverUser.email}]`)
+				// !LOGS
 			}
 		}
         res.redirect("/users/list");
@@ -273,7 +302,8 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			res.render("users/friends.twig", response);
 
 		} catch (error) {
-			res.send("Se ha producido un error al listar a los amigos " + error)
+			res.status(500)
+			res.render("error.twig", {message: "Se ha producido un error al listar a los amigos", user: req.session.user, error: error})
 		}
     })
 }

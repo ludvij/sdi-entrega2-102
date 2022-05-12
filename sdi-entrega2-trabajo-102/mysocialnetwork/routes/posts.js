@@ -1,3 +1,5 @@
+const logger = require('../logger')
+
 module.exports = function(app, usersRepository, postsRepository) {
     app.get("/posts", function(req, res) {
         res.redirect("/posts/listOwn");
@@ -15,7 +17,10 @@ module.exports = function(app, usersRepository, postsRepository) {
 			};
 			let post = await postsRepository.create(postPlain)
 			creatorUser.posts.push(post._id);
-			creatorUser.save();
+			await creatorUser.save();
+			// LOGS
+			logger.info(`${req.session.user.email} has created a new post: [${post._id}]`)
+			// !LOGS
 			res.redirect("/posts/listOwn");
 		} catch (error) {
 			res.status(500).send(error)
@@ -31,9 +36,7 @@ module.exports = function(app, usersRepository, postsRepository) {
 			if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {
 				page = 1;
 			}
-			// console.log(user)
 			let posts = await postsRepository.getPostsPg(filter, options, page)
-			// console.log(posts)
 			let lastPage = posts.total / 5;
 			if (posts.total % 5 > 0)
 				lastPage = lastPage + 1;
@@ -67,7 +70,8 @@ module.exports = function(app, usersRepository, postsRepository) {
 			})
 
 			if(!friends){
-				res.send("No puedes ver las publicaciones de esa persona")
+				res.status(403)
+				res.render("error.twig", {message: "No puedes ver las publicaciones de esa persona", user: req.session.user})
 			}else {
 				let filter = {owner: user._id};
 				let options = {};
@@ -97,8 +101,9 @@ module.exports = function(app, usersRepository, postsRepository) {
 				res.render("posts/list.twig", response);
 			}
 		} catch(error) {
-			console.log(error)
-			res.status(500).send(error)
+			logger.warn(error)
+			res.status(500)
+			res.render("error.twig", {message: "Se ha producido un error", user: req.session.user, error: error})
 		}
 	});
 
