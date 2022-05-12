@@ -67,7 +67,7 @@ module.exports = function(app, usersRepository, postsRepository) {
 			})
 
 			if(!friends){
-				res.send("No puedes ver las publicaciones de esa persona")
+				res.render("error.twig", {message: "No puedes ver las publicaciones de esa persona", user: req.session.user})
 			}else {
 				let filter = {owner: user._id};
 				let options = {};
