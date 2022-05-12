@@ -19,11 +19,10 @@ module.exports = (app, usersRepository, postRepository, friendshipRequestReposit
 	});
 
     app.post('/admin/delete/', async (req, res) => {
-		let emails = []
 		if (typeof req.body.users == 'string') {
-			usersRepository.deleteUser(req.body.users)
+			await usersRepository.deleteUser(req.body.users)
 		} else{
-			usersRepository.deleteUsers(req.body.users)
+			await usersRepository.deleteUsers(req.body.users)
 		}
         res.redirect("/admin/list");
     })
