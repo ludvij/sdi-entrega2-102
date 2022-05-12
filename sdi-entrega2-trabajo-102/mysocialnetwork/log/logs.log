@@ -1,0 +1,36 @@
+2022-05-11T19:00:41.267Z [info] : created user: test23@email.com
+2022-05-11T19:00:48.385Z [info] : test23@email.com has logged in
+2022-05-11T19:00:48.392Z [info] : test23@email.com -> /users/list
+2022-05-11T19:00:50.607Z [info] : test23@email.com -> /users/requests/list
+2022-05-11T19:00:51.947Z [info] : test23@email.com -> /friends/627c07d94f46725ae4bd299b
+2022-05-11T19:00:57.770Z [info] : test23@email.com -> /users/list
+2022-05-11T19:02:15.105Z [info] : created user: test23@email.com
+2022-05-11T19:02:18.459Z [info] : test23@email.com has logged in
+2022-05-11T19:02:18.465Z [info] : test23@email.com -> /users/list
+2022-05-11T19:02:21.233Z [info] : test23@email.com -> /users/list/send/user01@email.com
+2022-05-11T19:02:21.432Z [info] : test23@email.com has sent a friendship request to: [user01@email.com]
+2022-05-11T19:02:21.440Z [info] : test23@email.com -> /users/list
+2022-05-11T19:02:29.794Z [info] : user01@email.com has logged in
+2022-05-11T19:02:29.800Z [info] : user01@email.com -> /users/list
+2022-05-11T19:02:31.603Z [info] : user01@email.com -> /users/requests/list
+2022-05-11T19:02:36.321Z [info] : user01@email.com -> /users/requests/list/decline/627c083ddac7c76001841c2d
+2022-05-11T19:02:55.181Z [info] : test23@email.com has logged in
+2022-05-11T19:02:55.191Z [info] : test23@email.com -> /users/list
+2022-05-11T19:03:37.234Z [info] : user01@email.com has logged in
+2022-05-11T19:03:37.243Z [info] : user01@email.com -> /users/list
+2022-05-11T19:03:38.894Z [info] : user01@email.com -> /users/requests/list
+2022-05-11T19:03:40.348Z [info] : user01@email.com -> /friends/6276375b2af1c3c02e64f551
+2022-05-11T19:03:40.959Z [info] : user01@email.com -> /users/requests/list
+2022-05-11T19:03:44.146Z [info] : user01@email.com -> /users/requests/list
+2022-05-11T19:03:54.121Z [info] : created user: test23@email.com
+2022-05-11T19:03:57.133Z [info] : test23@email.com has logged in
+2022-05-11T19:03:57.139Z [info] : test23@email.com -> /users/list
+2022-05-11T19:03:58.796Z [info] : test23@email.com -> /users/list/send/user01@email.com
+2022-05-11T19:03:58.996Z [info] : test23@email.com has sent a friendship request to: [user01@email.com]
+2022-05-11T19:03:59.005Z [info] : test23@email.com -> /users/list
+2022-05-11T19:04:07.254Z [info] : user01@email.com has logged in
+2022-05-11T19:04:07.259Z [info] : user01@email.com -> /users/list
+2022-05-11T19:04:08.224Z [info] : user01@email.com -> /users/requests/list
+2022-05-11T19:04:09.345Z [info] : user01@email.com -> /users/requests/list/decline/627c089e6f37901de9d3d7dc
+2022-05-11T19:04:09.492Z [info] : user01@email.com has declined a friendship request from: [test23@email.com]
+2022-05-11T19:04:09.502Z [info] : user01@email.com -> /users/requests/list
