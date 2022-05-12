@@ -36,7 +36,7 @@ module.exports = function (app, usersRepository, messageRepository) {
 						user: user
 					}
 					let token = app.get('jwt').sign(payload, app.get('jwt_secret'),{expiresIn: '1h'})
-					console.log(user)
+					
 					return res.status(200).json({
 						message: 'Usuario autorizado',
 						authenticated: true,

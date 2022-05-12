@@ -51,7 +51,7 @@
     })
 
     function loadConversation() {
-        console.log("Calling " + URLbase + "/conversation/" + friendId);
+
         $.ajax({
             url: URLbase + "/conversation/" + friendId,
             type: "GET",
@@ -79,10 +79,10 @@
                     dataType: "json",
                     headers: {"token": token},
                     success: function (response) {
-                        console.log("Mensaje marcado como leído");
+
                     },
                     error: function(error) {
-                        console.log("No se ha podido marcar el mensaje como leído")
+
                     }
                 })
             }
