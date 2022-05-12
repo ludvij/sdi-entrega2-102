@@ -1,3 +1,5 @@
+const logger = require('../logger')
+
 module.exports = function (app, usersRepository, friendshipRequestRepository) {
     app.get('/signup', (req, res) => {
         if (req.session.user == null) {
@@ -18,7 +20,10 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					"&messageType=alert-danger");
 			}
 			try {
-				await usersRepository.createUser(req.body, securePassword)
+				let user = await usersRepository.createUser(req.body, securePassword)
+				// LOGS
+				logger.info('created user: ' + user.email)
+				// !LOGS
 				return res.redirect("/login" + '?message=Nuevo usuario registrado. Inicie la sesión.' +
 					"&messageType=alert-info");
 			} catch (err) {
@@ -58,7 +63,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					return res.redirect("/login" + "?message=Datos incorrectos" + "&messageType=alert-danger ");
 				} else {
 					req.session.user = user;
-					console.log("logged in as " + user.name + "(" + user.email + ")");
+					// LOGS
+					logger.info(user.email + ' has logged in')
+					// !LOGS
 					if (user.role === "ROLE_ADMIN") {
 						return res.redirect("/admin/list");
 					} else {
@@ -66,7 +73,7 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 					}
 				}
 			} catch (error) {
-				console.log(error)
+				logger.error(error)
 				res.status(500).send(error)
 			}
         }
@@ -207,6 +214,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 		if (!receiver.friends.includes(sender._id) && !sender.friends.includes(receiver._id)) {
 			await usersRepository.setFriendship(receiver, sender);
 			await friendshipRequestRepository.deleteFriendshipRequest(req.params.id);
+			// LOGS
+			logger.info(`${req.session.user.email} has accepted a friendship request from: [${sender.email}]`)
+			// !LOGS
 		}
 		res.redirect('/users/requests/list');
 	})
@@ -220,6 +230,11 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			return res.status(401).send('not your friendship request')
 		}
 		await friendshipRequestRepository.deleteFriendshipRequest(req.params.id)
+
+		let {email} = await usersRepository.findUser({_id: fr.sender}, "email")
+		// LOGS
+		logger.info(`${req.session.user.email} has declined a friendship request from: [${email}]`)
+		// !LOGS
 		res.redirect('/users/requests/list');
 
     });
@@ -241,6 +256,9 @@ module.exports = function (app, usersRepository, friendshipRequestRepository) {
 			let frienshipRequests = await friendshipRequestRepository.getFriendshipRequests(filter, options)
 			if(frienshipRequests.length == 0){
 				await friendshipRequestRepository.addFriendshipRequest(senderUser, receiverUser)
+				// LOGS
+				logger.info(`${req.session.user.email} has sent a friendship request to: [${receiverUser.email}]`)
+				// !LOGS
 			}
 		}
         res.redirect("/users/list");
